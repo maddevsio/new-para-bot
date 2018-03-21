@@ -1,11 +1,13 @@
 package dce
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/buger/jsonparser"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/sergi/go-diff/diffmatchpatch"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/resty.v1"
 )
@@ -44,5 +46,21 @@ func TestBinanceApi(t *testing.T) {
 	db.Last(&binance)
 	// this check is for GORM mainly
 	assert.Equal(t, pairs, binance.LastPairs)
+
+	// add new pair and check diff with stored pairs
+	pairs += "KGZBTC\n"
+	dmp := diffmatchpatch.New()
+	diffs := dmp.DiffMain(binance.LastPairs, pairs, true)
+	var buff bytes.Buffer
+	for _, diff := range diffs {
+		text := diff.Text
+		switch diff.Type {
+		case diffmatchpatch.DiffInsert:
+			_, _ = buff.WriteString("ADDED: " + text)
+		case diffmatchpatch.DiffDelete:
+			_, _ = buff.WriteString("DELETED: " + text)
+		}
+	}
+	assert.Equal(t, "ADDED: KGZBTC\n", buff.String())
 	db.Delete(&binance)
 }
