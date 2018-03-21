@@ -62,5 +62,7 @@ func TestBinanceApi(t *testing.T) {
 		}
 	}
 	assert.Equal(t, "ADDED: KGZBTC\n", buff.String())
+
+	// TODO need to UPDATE db with new pairs
 	db.Delete(&binance)
 }
