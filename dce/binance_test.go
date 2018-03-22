@@ -40,7 +40,11 @@ func TestBinanceApi(t *testing.T) {
 	}
 	defer db.Close()
 
+	db.DropTable(&Binance{})
 	db.AutoMigrate(&Binance{})
+	var count int
+	db.Model(&Binance{}).Count(&count)
+	assert.Equal(t, 0, count)
 	db.Create(&Binance{LastPairs: pairs})
 	var binance Binance
 	db.Last(&binance)
@@ -62,7 +66,5 @@ func TestBinanceApi(t *testing.T) {
 		}
 	}
 	assert.Equal(t, "ADDED: KGZBTC\n", buff.String())
-
-	// TODO need to UPDATE db with new pairs
-	db.Delete(&binance)
+	db.Model(&binance).Update("LastPair", pairs)
 }
