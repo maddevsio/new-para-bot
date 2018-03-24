@@ -12,11 +12,6 @@ import (
 	"gopkg.in/resty.v1"
 )
 
-type Binance struct {
-	gorm.Model
-	LastPairs string
-}
-
 func TestBinanceApi(t *testing.T) {
 	// iterate throught all active pairs
 	resp, err := resty.R().Get("https://api.binance.com/api/v1/exchangeInfo")
