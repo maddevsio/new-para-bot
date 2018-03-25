@@ -43,3 +43,6 @@ func TestBinanceApi(t *testing.T) {
 	diff := binance.Diff(savedPairs, actualPairs)
 	assert.Equal(t, "ADDED: KGZBTC\n", diff)
 }
+
+// TODO: need to add test cases for errors
+// to get the full 100% coverage
