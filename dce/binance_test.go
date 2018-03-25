@@ -1,14 +1,14 @@
 package dce
 
 import (
-	"bytes"
 	"testing"
 
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/sergi/go-diff/diffmatchpatch"
 	"github.com/stretchr/testify/assert"
 )
 
+// TestBinanceApi represents a full flow and can be used in the
+// bot as is. Just remowe asserts and you can get actual flow
 func TestBinanceApi(t *testing.T) {
 	b := NewBinance()
 	actualPairs, err := b.GetListOfActualPairs()
@@ -29,17 +29,7 @@ func TestBinanceApi(t *testing.T) {
 
 	// add new pair and check diff with stored pairs
 	actualPairs += "KGZBTC\n"
-	dmp := diffmatchpatch.New()
-	diffs := dmp.DiffMain(savedPairs, actualPairs, true)
-	var buff bytes.Buffer
-	for _, diff := range diffs {
-		text := diff.Text
-		switch diff.Type {
-		case diffmatchpatch.DiffInsert:
-			_, _ = buff.WriteString("ADDED: " + text)
-		case diffmatchpatch.DiffDelete:
-			_, _ = buff.WriteString("DELETED: " + text)
-		}
-	}
-	assert.Equal(t, "ADDED: KGZBTC\n", buff.String())
+
+	diff := b.Diff(savedPairs, actualPairs)
+	assert.Equal(t, "ADDED: KGZBTC\n", diff)
 }

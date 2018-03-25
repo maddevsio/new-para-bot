@@ -1,8 +1,11 @@
 package dce
 
 import (
+	"bytes"
+
 	"github.com/buger/jsonparser"
 	"github.com/jinzhu/gorm"
+	"github.com/sergi/go-diff/diffmatchpatch"
 	resty "gopkg.in/resty.v1"
 )
 
@@ -85,6 +88,22 @@ func (b *Binance) UpdatePairs(pairs string) error {
 	}
 	db.Create(&Binance{LastPairs: pairs})
 	return db.Error
+}
+
+func (b *Binance) Diff(savedPairs string, actualPairs string) string {
+	dmp := diffmatchpatch.New()
+	diffs := dmp.DiffMain(savedPairs, actualPairs, true)
+	var buff bytes.Buffer
+	for _, diff := range diffs {
+		text := diff.Text
+		switch diff.Type {
+		case diffmatchpatch.DiffInsert:
+			_, _ = buff.WriteString("ADDED: " + text)
+		case diffmatchpatch.DiffDelete:
+			_, _ = buff.WriteString("DELETED: " + text)
+		}
+	}
+	return buff.String()
 }
 
 func (b *Binance) getDB() (*gorm.DB, error) {
