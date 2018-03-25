@@ -10,26 +10,36 @@ import (
 // TestBinanceApi represents a full flow and can be used in the
 // bot as is. Just remowe asserts and you can get actual flow
 func TestBinanceApi(t *testing.T) {
-	b := NewBinance()
-	actualPairs, err := b.GetListOfActualPairs()
+	// initiate Binance struct
+	binance := NewBinance()
+
+	// get actual pairs and check
+	actualPairs, err := binance.GetListOfActualPairs()
 	assert.NoError(t, err)
 	assert.Contains(t, actualPairs, "ETHBTC") // check popular pairs
 	assert.Contains(t, actualPairs, "XEMBNB")
-	err = b.DeleteAll()
+
+	// delete all data before main logic
+	// this deletion only for testing, we need to empty data set
+	err = binance.DeleteAll()
 	assert.NoError(t, err)
-	count, err := b.Count()
+	count, err := binance.Count()
 	assert.NoError(t, err)
 	assert.Equal(t, 0, count)
-	err = b.UpdatePairs(actualPairs)
+
+	// update binance struct with newly get pairs from API
+	err = binance.UpdatePairs(actualPairs)
 	assert.NoError(t, err)
-	// this check is for GORM mainly
-	savedPairs, err := b.GetListOfSavedPairs()
+
+	// simulate the case when we are getting the data from storage
+	savedPairs, err := binance.GetListOfSavedPairs()
 	assert.NoError(t, err)
 	assert.Equal(t, actualPairs, savedPairs)
 
 	// add new pair and check diff with stored pairs
+	// in main bot logic this can be changed with Binance API call
 	actualPairs += "KGZBTC\n"
 
-	diff := b.Diff(savedPairs, actualPairs)
+	diff := binance.Diff(savedPairs, actualPairs)
 	assert.Equal(t, "ADDED: KGZBTC\n", diff)
 }

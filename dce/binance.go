@@ -90,6 +90,14 @@ func (b *Binance) UpdatePairs(pairs string) error {
 	return db.Error
 }
 
+// Diff returns differencies between two set of pairs
+// * if pairs are equal the result is "" string
+// * if we have new pair, the ADDED PAIRNAME\n shall be added to the return set
+// * if some pairs were deleted, that DELETED PAIRNAME\n shall be added to the return set
+// * example (note that several diffs are splitted by newlines, e.g. \n):
+// ADDED: KGZBTC
+// ADDED: BTCKGZ
+// DELETED: MAVROETH
 func (b *Binance) Diff(savedPairs string, actualPairs string) string {
 	dmp := diffmatchpatch.New()
 	diffs := dmp.DiffMain(savedPairs, actualPairs, true)
