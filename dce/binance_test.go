@@ -11,6 +11,7 @@ import (
 // bot as is. Just remowe asserts and you can get actual flow
 func TestBinanceApi(t *testing.T) {
 	// initiate Binance struct
+	// TODO: need to pass custom params to the constructor
 	binance := NewBinance()
 
 	// get actual pairs and check
@@ -40,9 +41,40 @@ func TestBinanceApi(t *testing.T) {
 	// in main bot logic this can be changed with Binance API call
 	actualPairs += "KGZBTC\n"
 
-	diff := binance.Diff(savedPairs, actualPairs)
+	diff, err := binance.Diff(savedPairs, actualPairs)
+	assert.NoError(t, err)
 	assert.Equal(t, "ADDED: KGZBTC\n", diff)
 }
 
 // TODO: need to add test cases for errors
 // to get the full 100% coverage
+
+func TestDiff(t *testing.T) {
+	var savedPairs, actualPairs, diff string
+	binance := NewBinance()
+
+	// alwaus end with newline (\n)
+	// no diff check
+	savedPairs, actualPairs = "PAIR1\nPAIR2\n", "PAIR1\nPAIR2\n"
+	diff, err := binance.Diff(savedPairs, actualPairs)
+	assert.NoError(t, err)
+	assert.Empty(t, diff)
+
+	// deleted line check
+	savedPairs, actualPairs = "PAIR1\nPAIR2\n", "PAIR1\n"
+	diff, err = binance.Diff(savedPairs, actualPairs)
+	assert.NoError(t, err)
+	assert.Equal(t, "DELETED: PAIR2\n", diff)
+
+	// added line check
+	savedPairs, actualPairs = "PAIR1\nPAIR2\n", "PAIR1\nPAIR2\nPAIR3\n"
+	diff, err = binance.Diff(savedPairs, actualPairs)
+	assert.NoError(t, err)
+	assert.Equal(t, "ADDED: PAIR3\n", diff)
+
+	// newline in the end existance check
+	savedPairs, actualPairs = "PAIR1\nPAIR2", "PAIR1\nPAIR2\n"
+	diff, err = binance.Diff(savedPairs, actualPairs)
+	assert.Error(t, err, "pairs should have a newline in the end")
+	assert.Empty(t, diff)
+}

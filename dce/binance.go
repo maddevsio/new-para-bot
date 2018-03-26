@@ -2,6 +2,7 @@ package dce
 
 import (
 	"bytes"
+	"errors"
 
 	"github.com/buger/jsonparser"
 	"github.com/jinzhu/gorm"
@@ -98,7 +99,10 @@ func (b *Binance) UpdatePairs(pairs string) error {
 // ADDED: KGZBTC
 // ADDED: BTCKGZ
 // DELETED: MAVROETH
-func (b *Binance) Diff(savedPairs string, actualPairs string) string {
+func (b *Binance) Diff(savedPairs string, actualPairs string) (string, error) {
+	if savedPairs[len(savedPairs)-1:] != "\n" {
+		return "", errors.New("pairs should have a newline in the end")
+	}
 	dmp := diffmatchpatch.New()
 	diffs := dmp.DiffMain(savedPairs, actualPairs, true)
 	var buff bytes.Buffer
@@ -111,7 +115,7 @@ func (b *Binance) Diff(savedPairs string, actualPairs string) string {
 			_, _ = buff.WriteString("DELETED: " + text)
 		}
 	}
-	return buff.String()
+	return buff.String(), nil
 }
 
 func (b *Binance) getDB() (*gorm.DB, error) {
