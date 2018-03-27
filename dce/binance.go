@@ -19,10 +19,10 @@ type Binance struct {
 }
 
 // NewBinance is a Binance struct constructor
-func NewBinance() *Binance {
+func NewBinance(DBPath string) *Binance {
 	return &Binance{
 		URL:    "https://api.binance.com/api/v1/exchangeInfo",
-		DBPath: "/tmp/test.db", // TODO: need to handle this
+		DBPath: DBPath,
 	}
 }
 
@@ -56,10 +56,10 @@ func (b *Binance) GetListOfSavedPairs() (string, error) {
 // Count returns the number of all Binance records. This should be 0 or 1
 func (b *Binance) Count() (int, error) {
 	db, err := b.getDB()
-	defer db.Close()
 	if err != nil {
 		return 0, err
 	}
+	defer db.Close()
 	var count int
 	db.Model(&Binance{}).Count(&count)
 	return count, db.Error
@@ -68,10 +68,10 @@ func (b *Binance) Count() (int, error) {
 // DeleteAll deletes all data from Binance table
 func (b *Binance) DeleteAll() error {
 	db, err := b.getDB()
-	defer db.Close()
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 	db.DropTable(&Binance{})
 	return db.Error
 }

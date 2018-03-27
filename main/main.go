@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"os"
+	"time"
 
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/maddevsio/new-para-bot/bot"
@@ -10,7 +10,19 @@ import (
 )
 
 func main() {
-	binance := dce.NewBinance()
+	for {
+		log.Print("Checking...")
+		checkBinanceAndAlert()
+		log.Print("Sleeping...")
+		time.Sleep(60 * time.Second)
+	}
+}
+
+func checkBinanceAndAlert() {
+	// we can use db inside the container
+	// because this is working table, no need
+	// to have historical data
+	binance := dce.NewBinance("/tmp/test.db")
 
 	// get actual pairs and check
 	actualPairs, err := binance.GetListOfActualPairs()
@@ -56,5 +68,4 @@ func main() {
 			log.Print("No diffs")
 		}
 	}
-	os.Exit(0)
 }

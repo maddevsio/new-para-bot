@@ -3,6 +3,7 @@ package dce
 import (
 	"testing"
 
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +12,7 @@ import (
 func TestBinanceApi(t *testing.T) {
 	// initiate Binance struct
 	// TODO: need to pass custom params to the constructor
-	binance := NewBinance()
+	binance := NewBinance("/tmp/test.db")
 
 	// get actual pairs and check
 	actualPairs, err := binance.GetListOfActualPairs()
@@ -50,7 +51,7 @@ func TestBinanceApi(t *testing.T) {
 
 func TestDiff(t *testing.T) {
 	var savedPairs, actualPairs, diff string
-	binance := NewBinance()
+	binance := NewBinance("/tmp/test.db")
 
 	// alwaus end with newline (\n)
 	// no diff check
