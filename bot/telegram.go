@@ -19,12 +19,12 @@ type TelegramConfig struct {
 // Need to provide token and chatID for a group
 // Here is a method how to get chatID for a private group:
 // https://stackoverflow.com/questions/33858927/how-to-obtain-the-chat-id-of-a-private-telegram-channel
-func SendMessageToTelegramChannel(config TelegramConfig) error {
+func SendMessageToTelegramChannel(config TelegramConfig, message string) error {
 	bot, err := tgbotapi.NewBotAPI(config.Token)
 	if err != nil {
 		return err
 	}
-	msg := tgbotapi.NewMessage(config.ChatID, "TEST TO CHANNEL")
+	msg := tgbotapi.NewMessage(config.ChatID, message)
 	bot.Send(msg)
 	return nil
 }
