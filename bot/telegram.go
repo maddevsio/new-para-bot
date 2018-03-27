@@ -32,7 +32,12 @@ func SendMessageToTelegramChannel(config TelegramConfig, message string) error {
 // GetTelegramConfig returns TelegramConfig struct
 // filled with data from .env file
 func GetTelegramConfig(envFilePath string) (TelegramConfig, error) {
-	err := godotenv.Load(envFilePath)
+	var err error
+	if envFilePath != "" {
+		err = godotenv.Load(envFilePath)
+	} else {
+		err = godotenv.Load()
+	}
 	if err != nil {
 		return TelegramConfig{}, err
 	}
