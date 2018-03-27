@@ -43,7 +43,7 @@ func main() {
 				log.Panic(err)
 			}
 			log.Print("Pairs updated")
-			config, err := bot.GetTelegramConfig("../.env")
+			config, err := bot.GetTelegramConfig("")
 			if err != nil {
 				log.Panic(err)
 			}
