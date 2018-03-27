@@ -3,7 +3,6 @@ package dce
 import (
 	"testing"
 
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/stretchr/testify/assert"
 )
 

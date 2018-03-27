@@ -7,7 +7,7 @@ import (
 )
 
 func TestSendMessageToTelegramChannel(t *testing.T) {
-	config, err := GetTelegramConfig("./.env")
+	config, err := GetTelegramConfig("../.env")
 	assert.NoError(t, err)
 	err = SendMessageToTelegramChannel(config, "Test Message")
 	assert.NoError(t, err)

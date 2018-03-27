@@ -45,10 +45,10 @@ func (b *Binance) GetListOfActualPairs() (string, error) {
 // GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
 func (b *Binance) GetListOfSavedPairs() (string, error) {
 	db, err := b.getDB()
-	defer db.Close()
 	if err != nil {
 		return "", err
 	}
+	defer db.Close()
 	db.Last(b)
 	return b.LastPairs, db.Error
 }
@@ -119,7 +119,6 @@ func (b *Binance) Diff(savedPairs string, actualPairs string) (string, error) {
 }
 
 func (b *Binance) getDB() (*gorm.DB, error) {
-	// TODO: if no pairs in storage than do not alert! consider this as a first run
 	db, err := gorm.Open("sqlite3", b.DBPath)
 	if err != nil {
 		return nil, err
