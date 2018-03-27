@@ -1,4 +1,4 @@
-FROM golang:1.8 
+FROM golang:latest
 RUN mkdir -p /src/github.com/maddevsio/new-para-bot
 ADD . /src/github.com/maddevsio/new-para-bot
 ENV GOPATH /
