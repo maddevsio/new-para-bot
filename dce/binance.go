@@ -11,25 +11,36 @@ import (
 )
 
 // Binance is a data struct for GORM to store prevours pairs from Binance
+// API manual https://github.com/binance-exchange/binance-official-api-docs
 type Binance struct {
 	gorm.Model
-	LastPairs string
-	URL       string `gorm:"-"`
-	DBPath    string `gorm:"-"`
+	LastPairs   string
+	URL         string `gorm:"-"`
+	DBPath      string `gorm:"-"`
+	RandomParam string `gorm:"-"` // need to add this to the URL to avoid cached responces
 }
 
 // NewBinance is a Binance struct constructor
 func NewBinance(DBPath string) *Binance {
 	return &Binance{
-		URL:    "https://api.binance.com/api/v1/exchangeInfo",
-		DBPath: DBPath,
+		URL:         "https://api.binance.com/api/v1/exchangeInfo",
+		DBPath:      DBPath,
+		RandomParam: "",
 	}
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs from api.binance.com
 func (b *Binance) GetListOfActualPairs() (string, error) {
+	// need to change random param on each request
+	// binane API does not accept any other symbol
+	// instead of "?"
+	if b.RandomParam == "" {
+		b.RandomParam = "?"
+	} else {
+		b.RandomParam = ""
+	}
 	// iterate throught all active pairs
-	resp, err := resty.R().Get(b.URL)
+	resp, err := resty.R().Get(b.URL + b.RandomParam)
 	if err != nil {
 		return "", err
 	}
