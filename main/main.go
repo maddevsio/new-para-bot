@@ -59,7 +59,7 @@ func checkBinanceAndAlert() {
 			if err != nil {
 				log.Panic(err)
 			}
-			err = bot.SendMessageToTelegramChannel(config, diff)
+			err = bot.SendMessageToTelegramChannel(config, "Binance: "+diff)
 			if err != nil {
 				log.Panic(err)
 			}
