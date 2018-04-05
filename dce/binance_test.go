@@ -72,6 +72,12 @@ func TestDiff(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "ADDED: PAIR3\n", diff)
 
+	// added lines check
+	savedPairs, actualPairs = "PAIR1\nPAIR2\n", "PAIR1\nPAIR2\nPAIR3\nPAIR4\nPAIR5\nPAIR6\nPAIR7\n"
+	diff, err = binance.Diff(savedPairs, actualPairs)
+	assert.NoError(t, err)
+	assert.Equal(t, "ADDED: PAIR3\nPAIR4\nPAIR5\nPAIR6\nPAIR7\n", diff)
+
 	// newline in the end existance check
 	savedPairs, actualPairs = "PAIR1\nPAIR2", "PAIR1\nPAIR2\n"
 	diff, err = binance.Diff(savedPairs, actualPairs)
