@@ -12,7 +12,8 @@ import (
 func TestBinanceApi(t *testing.T) {
 	// initiate Binance struct
 	// TODO: need to pass custom params to the constructor
-	binance := NewBinance("/tmp/test.db")
+	binance := NewBinance()
+	dao := NewDAO("/tmp/test.db")
 
 	// get actual pairs and check
 	actualPairs, err := binance.GetListOfActualPairs()
@@ -22,18 +23,18 @@ func TestBinanceApi(t *testing.T) {
 
 	// delete all data before main logic
 	// this deletion only for testing, we need to empty data set
-	err = binance.DeleteAll()
+	err = dao.DeleteAll(binance)
 	assert.NoError(t, err)
-	count, err := binance.Count()
+	count, err := dao.Count(binance)
 	assert.NoError(t, err)
 	assert.Equal(t, 0, count)
 
 	// update binance struct with newly get pairs from API
-	err = binance.UpdatePairs(actualPairs)
+	err = binance.UpdatePairs(dao, actualPairs)
 	assert.NoError(t, err)
 
 	// simulate the case when we are getting the data from storage
-	savedPairs, err := binance.GetListOfSavedPairs()
+	savedPairs, err := binance.GetListOfSavedPairs(dao)
 	assert.NoError(t, err)
 	assert.Equal(t, actualPairs, savedPairs)
 
@@ -41,7 +42,7 @@ func TestBinanceApi(t *testing.T) {
 	// in main bot logic this can be changed with Binance API call
 	actualPairs += "KGZBTC\n"
 
-	diff, err := binance.Diff(savedPairs, actualPairs)
+	diff, err := dao.Diff(savedPairs, actualPairs)
 	assert.NoError(t, err)
 	assert.Equal(t, "ADDED: KGZBTC\n", diff)
 }
@@ -51,36 +52,36 @@ func TestBinanceApi(t *testing.T) {
 
 func TestDiff(t *testing.T) {
 	var savedPairs, actualPairs, diff string
-	binance := NewBinance("/tmp/test.db")
+	dao := NewDAO("/tmp/test.db")
 
 	// alwaus end with newline (\n)
 	// no diff check
 	savedPairs, actualPairs = "PAIR1\nPAIR2\n", "PAIR1\nPAIR2\n"
-	diff, err := binance.Diff(savedPairs, actualPairs)
+	diff, err := dao.Diff(savedPairs, actualPairs)
 	assert.NoError(t, err)
 	assert.Empty(t, diff)
 
 	// deleted line check
 	savedPairs, actualPairs = "PAIR1\nPAIR2\n", "PAIR1\n"
-	diff, err = binance.Diff(savedPairs, actualPairs)
+	diff, err = dao.Diff(savedPairs, actualPairs)
 	assert.NoError(t, err)
 	assert.Equal(t, "DELETED: PAIR2\n", diff)
 
 	// added line check
 	savedPairs, actualPairs = "PAIR1\nPAIR2\n", "PAIR1\nPAIR2\nPAIR3\n"
-	diff, err = binance.Diff(savedPairs, actualPairs)
+	diff, err = dao.Diff(savedPairs, actualPairs)
 	assert.NoError(t, err)
 	assert.Equal(t, "ADDED: PAIR3\n", diff)
 
 	// added lines check
 	savedPairs, actualPairs = "PAIR1\nPAIR2\n", "PAIR1\nPAIR2\nPAIR3\nPAIR4\nPAIR5\nPAIR6\nPAIR7\n"
-	diff, err = binance.Diff(savedPairs, actualPairs)
+	diff, err = dao.Diff(savedPairs, actualPairs)
 	assert.NoError(t, err)
 	assert.Equal(t, "ADDED: PAIR3\nPAIR4\nPAIR5\nPAIR6\nPAIR7\n", diff)
 
 	// newline in the end existance check
 	savedPairs, actualPairs = "PAIR1\nPAIR2", "PAIR1\nPAIR2\n"
-	diff, err = binance.Diff(savedPairs, actualPairs)
+	diff, err = dao.Diff(savedPairs, actualPairs)
 	assert.Error(t, err, "pairs should have a newline in the end")
 	assert.Empty(t, diff)
 }

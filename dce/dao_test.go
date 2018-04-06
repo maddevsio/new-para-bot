@@ -13,6 +13,11 @@ type TestDaoObject struct {
 	LastPairs string
 }
 
+type TestAnotherDaoObject struct {
+	gorm.Model
+	LastPairs string
+}
+
 func TestDao(t *testing.T) {
 	dao := NewDAO("/tmp/test.db")
 
@@ -24,6 +29,9 @@ func TestDao(t *testing.T) {
 	assert.Equal(t, 0, c)
 
 	err = dao.DeleteAllAndCreate(&TestDaoObject{LastPairs: "lastpairs"})
+	assert.NoError(t, err)
+
+	err = dao.DeleteAllAndCreate(&TestAnotherDaoObject{LastPairs: "lastpairs"})
 	assert.NoError(t, err)
 
 	c, err = dao.Count(&TestDaoObject{})
