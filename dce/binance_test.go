@@ -45,5 +45,5 @@ func TestBinanceApi(t *testing.T) {
 
 	diff, err := utils.Diff(savedPairs, actualPairs)
 	assert.NoError(t, err)
-	assert.Equal(t, "ADDED: KGZBTC\n", diff)
+	assert.Equal(t, "ADDED: KGZBTC\n\n", diff)
 }

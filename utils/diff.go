@@ -26,9 +26,9 @@ func Diff(savedPairs string, actualPairs string) (string, error) {
 		text := diff.Text
 		switch diff.Type {
 		case diffmatchpatch.DiffInsert:
-			_, _ = buff.WriteString("ADDED: " + text)
+			_, _ = buff.WriteString("ADDED: " + text + "\n")
 		case diffmatchpatch.DiffDelete:
-			_, _ = buff.WriteString("DELETED: " + text)
+			_, _ = buff.WriteString("DELETED: " + text + "\n")
 		}
 	}
 	return buff.String(), nil
