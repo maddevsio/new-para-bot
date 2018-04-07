@@ -10,16 +10,19 @@ import (
 // API manual https://github.com/binance-exchange/binance-official-api-docs
 type Binance struct {
 	gorm.Model
+	Name        string
 	LastPairs   string
+	dao         *DAO   `gorm:"-"`
 	URL         string `gorm:"-"`
 	RandomParam string `gorm:"-"` // need to add this to the URL to avoid cached responces
 }
 
 // NewBinance is a Binance struct constructor
-func NewBinance() *Binance {
+func NewBinance(dao *DAO) *Binance {
 	return &Binance{
-		URL:         "https://api.binance.com/api/v1/exchangeInfo",
-		RandomParam: "",
+		URL:  "https://api.binance.com/api/v1/exchangeInfo",
+		Name: "Binance",
+		dao:  dao,
 	}
 }
 
@@ -48,14 +51,14 @@ func (b *Binance) GetListOfActualPairs() (string, error) {
 }
 
 // GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (b *Binance) GetListOfSavedPairs(dao DAO) (string, error) {
-	err := dao.GetLast(b)
+func (b *Binance) GetListOfSavedPairs() (string, error) {
+	err := b.dao.GetLast(b)
 	return b.LastPairs, err
 }
 
 // UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (b *Binance) UpdatePairs(dao DAO, pairs string) error {
+func (b *Binance) UpdatePairs(pairs string) error {
 	b.LastPairs = pairs
-	err := dao.DeleteAllAndCreate(b)
+	err := b.dao.DeleteAllAndCreate(b)
 	return err
 }

@@ -16,6 +16,7 @@ func TestHitbtc(t *testing.T) {
 		pair, _ := jsonparser.GetString(value, "id")
 		pairs += pair + "\n"
 	})
-	t.Log(pairs)
-	t.Fail()
+
+	assert.Contains(t, pairs, "BTCUSD") // check popular pairs
+	assert.Contains(t, pairs, "XDNETH")
 }

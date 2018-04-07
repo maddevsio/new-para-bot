@@ -22,8 +22,8 @@ func checkBinanceAndAlert() {
 	// we can use db inside the container
 	// because this is working table, no need
 	// to have historical data
-	binance := dce.NewBinance()
 	dao := dce.NewDAO("/tmp/test.db")
+	binance := dce.NewBinance(&dao)
 
 	// get actual pairs and check
 	actualPairs, err := binance.GetListOfActualPairs()
@@ -31,7 +31,7 @@ func checkBinanceAndAlert() {
 		log.Panic(err)
 	}
 
-	savedPairs, err := binance.GetListOfSavedPairs(dao)
+	savedPairs, err := binance.GetListOfSavedPairs()
 	if err != nil {
 		log.Panic(err)
 	}
@@ -39,20 +39,19 @@ func checkBinanceAndAlert() {
 	log.Printf("Pairs length: %v, %v", len(actualPairs), len(savedPairs))
 
 	if savedPairs == "" {
-		err = binance.UpdatePairs(dao, actualPairs)
+		err = binance.UpdatePairs(actualPairs)
 		if err != nil {
 			log.Panic(err)
 		}
 		log.Print("No saved data. Seems the first run")
 	} else {
-		// TODO: need to move DIFF to binance, but call dao diff func
 		diff, err := dao.Diff(savedPairs, actualPairs)
 		if err != nil {
 			log.Panic(err)
 		}
 		if diff != "" {
 			log.Print("We have diffs")
-			err = binance.UpdatePairs(dao, actualPairs)
+			err = binance.UpdatePairs(actualPairs)
 			if err != nil {
 				log.Panic(err)
 			}
