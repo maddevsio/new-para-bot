@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/maddevsio/new-para-bot/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,7 +43,7 @@ func TestBinanceApi(t *testing.T) {
 	// in main bot logic this can be changed with Binance API call
 	actualPairs += "KGZBTC\n"
 
-	diff, err := dao.Diff(savedPairs, actualPairs)
+	diff, err := utils.Diff(savedPairs, actualPairs)
 	assert.NoError(t, err)
 	assert.Equal(t, "ADDED: KGZBTC\n", diff)
 }

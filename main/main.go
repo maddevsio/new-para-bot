@@ -7,66 +7,75 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/maddevsio/new-para-bot/bot"
 	"github.com/maddevsio/new-para-bot/dce"
+	"github.com/maddevsio/new-para-bot/utils"
 )
 
-func main() {
-	for {
-		log.Print("Checking...")
-		checkBinanceAndAlert()
-		log.Print("Sleeping...")
-		time.Sleep(60 * time.Second)
-	}
+// DCEChecker used in checkBinanceAndAlert
+type DCEChecker interface {
+	GetListOfActualPairs() (string, error)
+	GetListOfSavedPairs() (string, error)
+	UpdatePairs(pairs string) error
 }
 
-func checkBinanceAndAlert() {
+func main() {
 	// we can use db inside the container
 	// because this is working table, no need
 	// to have historical data
 	dao := dce.NewDAO("/tmp/test.db")
 	binance := dce.NewBinance(&dao)
+	hibtc := dce.NewHibtc(&dao)
+	for {
+		log.Print("Checking...")
+		checkBinanceAndAlert(binance, binance.Name)
+		checkBinanceAndAlert(hibtc, hibtc.Name)
+		log.Print("Sleeping...")
+		time.Sleep(60 * time.Second)
+	}
+}
 
+func checkBinanceAndAlert(dce DCEChecker, name string) {
 	// get actual pairs and check
-	actualPairs, err := binance.GetListOfActualPairs()
+	actualPairs, err := dce.GetListOfActualPairs()
 	if err != nil {
 		log.Panic(err)
 	}
 
-	savedPairs, err := binance.GetListOfSavedPairs()
+	savedPairs, err := dce.GetListOfSavedPairs()
 	if err != nil {
 		log.Panic(err)
 	}
 
-	log.Printf("Pairs length: %v, %v", len(actualPairs), len(savedPairs))
+	log.Printf("%v: Pairs length: %v, %v", name, len(actualPairs), len(savedPairs))
 
 	if savedPairs == "" {
-		err = binance.UpdatePairs(actualPairs)
+		err = dce.UpdatePairs(actualPairs)
 		if err != nil {
 			log.Panic(err)
 		}
-		log.Print("No saved data. Seems the first run")
+		log.Printf("%v: No saved data. Seems the first run", name)
 	} else {
-		diff, err := dao.Diff(savedPairs, actualPairs)
+		diff, err := utils.Diff(savedPairs, actualPairs)
 		if err != nil {
 			log.Panic(err)
 		}
 		if diff != "" {
-			log.Print("We have diffs")
-			err = binance.UpdatePairs(actualPairs)
+			log.Printf("%v: We have diffs", name)
+			err = dce.UpdatePairs(actualPairs)
 			if err != nil {
 				log.Panic(err)
 			}
-			log.Print("Pairs updated")
+			log.Printf("%v: Pairs updated", name)
 			config, err := bot.GetTelegramConfig("")
 			if err != nil {
 				log.Panic(err)
 			}
-			err = bot.SendMessageToTelegramChannel(config, "Binance: "+diff)
+			err = bot.SendMessageToTelegramChannel(config, name+": "+diff)
 			if err != nil {
 				log.Panic(err)
 			}
-			log.Print("Bot message sent")
+			log.Printf("%v: Bot message sent", name)
 		} else {
-			log.Print("No diffs")
+			log.Printf("%v No diffs", name)
 		}
 	}
 }
