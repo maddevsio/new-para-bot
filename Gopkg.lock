@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/antonholmquist/jason"
+  packages = ["."]
+  revision = "c23cef7eaa75a6a5b8810120e167bd590d8fd2ab"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/buger/jsonparser"
   packages = ["."]
@@ -109,6 +115,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ccd5aa29a6f9359e9334c17b6fa8afd5e0f179c9b9631f453e5750291bbe4ca3"
+  inputs-digest = "75964b5487722bed2eef38d1016b54a1678bb83580e00e2d93e944f5cc7b6b8e"
   solver-name = "gps-cdcl"
   solver-version = 1
