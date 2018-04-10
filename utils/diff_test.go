@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/PieterD/diff"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -45,4 +47,36 @@ func TestDiff(t *testing.T) {
 	diff, err = Diff(savedPairs, actualPairs)
 	assert.NoError(t, err)
 	assert.Equal(t, "DELETED: 1\nADDED: 3\nADDED: PAIR4\n\n", diff)
+}
+
+func TestAnotherDiffer(t *testing.T) {
+	// Data
+	l := []string{
+		"linea",
+		"lineb",
+		"lineM",
+		"linec",
+	}
+	r := []string{
+		"linea",
+		"lineQ",
+		"linec",
+		"lineM",
+	}
+	// Diff l and r using Strings
+	d := diff.New(diff.Strings{
+		Left:  l,
+		Right: r,
+	})
+	// Print the diff
+	for i := range d {
+		switch d[i].Delta {
+		case diff.Both:
+			//fmt.Printf("  %s\n", l[d[i].Index])
+		case diff.Left:
+			fmt.Printf("- %s\n", l[d[i].Index])
+		case diff.Right:
+			fmt.Printf("+ %s\n", r[d[i].Index])
+		}
+	}
 }
