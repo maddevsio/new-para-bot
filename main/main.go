@@ -27,6 +27,7 @@ func main() {
 	liqui := dce.NewLiqui(&dao)
 	ethfinex := dce.NewEthfinex(&dao)
 	kucoin := dce.NewKucoin(&dao)
+	livecoin := dce.NewLivecoin(&dao)
 	for {
 		log.Print("Checking...")
 		checkDCEAndAlert(binance, binance.Name)
@@ -34,6 +35,7 @@ func main() {
 		checkDCEAndAlert(liqui, liqui.Name)
 		checkDCEAndAlert(ethfinex, ethfinex.Name)
 		checkDCEAndAlert(kucoin, kucoin.Name)
+		checkDCEAndAlert(livecoin, livecoin.Name)
 		log.Print("Sleeping...")
 		time.Sleep(60 * time.Second)
 	}
