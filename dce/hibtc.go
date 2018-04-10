@@ -1,6 +1,9 @@
 package dce
 
 import (
+	"sort"
+	"strings"
+
 	"github.com/buger/jsonparser"
 	"github.com/jinzhu/gorm"
 	resty "gopkg.in/resty.v1"
@@ -34,10 +37,15 @@ func (h *Hibtc) GetListOfActualPairs() (string, error) {
 		return "", err
 	}
 	var pairs string
+	var pairsSlice []string
+
 	jsonparser.ArrayEach([]byte(resp.String()), func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		pair, _ := jsonparser.GetString(value, "id")
-		pairs += pair + "\n"
+		pairsSlice = append(pairsSlice, pair+"\n")
 	})
+
+	sort.Strings(pairsSlice)
+	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
 }

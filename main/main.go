@@ -24,16 +24,18 @@ func main() {
 	dao := dce.NewDAO("/tmp/test.db")
 	binance := dce.NewBinance(&dao)
 	hibtc := dce.NewHibtc(&dao)
+	liqui := dce.NewLiqui(&dao)
 	for {
 		log.Print("Checking...")
-		checkBinanceAndAlert(binance, binance.Name)
-		checkBinanceAndAlert(hibtc, hibtc.Name)
+		checkDCEAndAlert(binance, binance.Name)
+		checkDCEAndAlert(hibtc, hibtc.Name)
+		checkDCEAndAlert(liqui, liqui.Name)
 		log.Print("Sleeping...")
 		time.Sleep(60 * time.Second)
 	}
 }
 
-func checkBinanceAndAlert(dce DCEChecker, name string) {
+func checkDCEAndAlert(dce DCEChecker, name string) {
 	// get actual pairs and check
 	actualPairs, err := dce.GetListOfActualPairs()
 	if err != nil {
