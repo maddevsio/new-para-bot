@@ -26,12 +26,14 @@ func main() {
 	hibtc := dce.NewHibtc(&dao)
 	liqui := dce.NewLiqui(&dao)
 	ethfinex := dce.NewEthfinex(&dao)
+	kucoin := dce.NewKucoin(&dao)
 	for {
 		log.Print("Checking...")
 		checkDCEAndAlert(binance, binance.Name)
 		checkDCEAndAlert(hibtc, hibtc.Name)
 		checkDCEAndAlert(liqui, liqui.Name)
 		checkDCEAndAlert(ethfinex, ethfinex.Name)
+		checkDCEAndAlert(kucoin, kucoin.Name)
 		log.Print("Sleeping...")
 		time.Sleep(60 * time.Second)
 	}

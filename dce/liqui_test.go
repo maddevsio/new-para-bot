@@ -13,6 +13,6 @@ func TestLiqui(t *testing.T) {
 	liqui := NewLiqui(&dao)
 	pairs, err := liqui.GetListOfActualPairs()
 	assert.NoError(t, err)
-	assert.Contains(t, pairs, "1st_btc") // check popular pairs
+	assert.Contains(t, pairs, "1st_btc")
 	assert.Contains(t, pairs, "zrx_usdt")
 }

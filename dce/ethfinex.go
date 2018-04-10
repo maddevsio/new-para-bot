@@ -29,7 +29,7 @@ func NewEthfinex(dao *DAO) *Ethfinex {
 	}
 }
 
-// GetListOfActualPairs makes a call to API and returns \n separated pairs from api.hitbtc.com
+// GetListOfActualPairs makes a call to API and returns \n separated pairs
 func (e *Ethfinex) GetListOfActualPairs() (string, error) {
 	resp, err := resty.R().Get(e.URL)
 	if err != nil {
