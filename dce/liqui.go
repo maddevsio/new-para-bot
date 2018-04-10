@@ -30,7 +30,7 @@ func NewLiqui(dao *DAO) *Liqui {
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs from api.liqui.io
 func (l *Liqui) GetListOfActualPairs() (string, error) {
-	resp, err := resty.R().Get("https://api.liqui.io/api/3/info")
+	resp, err := resty.R().Get(l.URL)
 	if err != nil {
 		return "", err
 	}
