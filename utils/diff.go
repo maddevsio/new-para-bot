@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"errors"
+	"io/ioutil"
 
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
@@ -32,4 +33,16 @@ func Diff(savedPairs string, actualPairs string) (string, error) {
 		}
 	}
 	return buff.String(), nil
+}
+
+// SaveNonEqualStringsToFiles should save two different stings to files
+// this needs for debug
+func SaveNonEqualStringsToFiles(name string, string1 string, string2 string) {
+	if string1 != string2 {
+		var rand = GetRandString()
+		var filename1 = rand + "_1_" + name
+		var filename2 = rand + "_2_" + name
+		ioutil.WriteFile("/tmp/"+filename1, []byte(string1), 0777)
+		ioutil.WriteFile("/tmp/"+filename2, []byte(string2), 0777)
+	}
 }

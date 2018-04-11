@@ -80,3 +80,12 @@ func TestAnotherDiffer(t *testing.T) {
 		}
 	}
 }
+
+func TestSaveDiffedDataToFiles(t *testing.T) {
+	// if text data are not equal
+	// save each text to separate file to /tmp
+	var name = "Kucoin"
+	var strings1 = "1\n2\n3\n"
+	var strings2 = "1\n2\n3\n4\n"
+	SaveNonEqualStringsToFiles(name, strings1, strings2)
+}
