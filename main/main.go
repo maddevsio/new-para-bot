@@ -30,6 +30,7 @@ func main() {
 	livecoin := dce.NewLivecoin(&dao)
 	tidex := dce.NewTidex(&dao)
 	okex := dce.NewOkex(&dao)
+	huobi := dce.NewHuobi(&dao)
 	for {
 		log.Print("Checking...")
 		checkDCEAndAlert(binance, binance.Name)
@@ -40,6 +41,7 @@ func main() {
 		checkDCEAndAlert(livecoin, livecoin.Name)
 		checkDCEAndAlert(tidex, tidex.Name)
 		checkDCEAndAlert(okex, okex.Name)
+		checkDCEAndAlert(huobi, huobi.Name)
 		log.Print("Sleeping...")
 		time.Sleep(60 * time.Second)
 	}
