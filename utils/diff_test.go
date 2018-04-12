@@ -68,20 +68,20 @@ func TestDiffSet(t *testing.T) {
 	savedPairs, actualPairs = "PAIR1\nPAIR3\nPAIR2\n", "PAIR1\nPAIR2\n"
 	diff, err = DiffSets(savedPairs, actualPairs)
 	assert.NoError(t, err)
-	assert.Equal(t, "DELETED: PAIR3\n", diff)
+	assert.Equal(t, "- PAIR3\n", diff)
 
 	savedPairs, actualPairs = "PAIR1\nPAIR2\n", "PAIR1\nPAIR2\nPAIR3\n"
 	diff, err = DiffSets(savedPairs, actualPairs)
 	assert.NoError(t, err)
-	assert.Equal(t, "ADDED: PAIR3\n", diff)
+	assert.Equal(t, "+ PAIR3\n", diff)
 }
 
 func TestDiffSetEmptyRight(t *testing.T) {
 	savedPairs, actualPairs := "PAIR1\nPAIR2\n", ""
 	diff, err := DiffSets(savedPairs, actualPairs)
 	assert.NoError(t, err)
-	assert.Contains(t, diff, "DELETED: PAIR1\n")
-	assert.Contains(t, diff, "DELETED: PAIR2\n")
+	assert.Contains(t, diff, "- PAIR1\n")
+	assert.Contains(t, diff, "- PAIR2\n")
 }
 
 func TestSaveDiffedDataToFiles(t *testing.T) {

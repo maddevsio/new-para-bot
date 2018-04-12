@@ -46,7 +46,7 @@ func DiffSets(savedPairs string, actualPairs string) (string, error) {
 	actualPairsSlice := strings.Split(actualPairs, "\n")
 
 	savedPairsSet := set.New()
-	if !(len(savedPairsSlice) == 1 && savedPairsSlice[0] == "") {
+	if !(len(savedPairsSlice) == 1 && savedPairsSlice[0] == "") { // added only valid slice
 		for _, element := range strings.Split(savedPairs, "\n") {
 			savedPairsSet.Add(element)
 		}
@@ -65,11 +65,11 @@ func DiffSets(savedPairs string, actualPairs string) (string, error) {
 	var result string
 	if added.Size() > 0 {
 		for _, item := range added.List() {
-			result += "ADDED: " + item.(string) + "\n"
+			result += "+ " + item.(string) + "\n"
 		}
 	}
 	for _, item := range deleted.List() {
-		result += "DELETED: " + item.(string) + "\n"
+		result += "- " + item.(string) + "\n"
 	}
 	return result, nil
 }

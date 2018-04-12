@@ -82,7 +82,7 @@ func checkDCEAndAlert(dce DCEChecker, name string) {
 			if err != nil {
 				log.Panic(err)
 			}
-			err = bot.SendMessageToTelegramChannel(config, name+"\n: "+diff)
+			err = bot.SendMessageToTelegramChannel(config, name+":\n "+diff)
 			if err != nil {
 				log.Panic(err)
 			}
