@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"errors"
 	"io/ioutil"
+	"strings"
 
 	"github.com/sergi/go-diff/diffmatchpatch"
+	set "gopkg.in/fatih/set.v0"
 )
 
 // Diff returns differencies between two set of pairs
@@ -33,6 +35,43 @@ func Diff(savedPairs string, actualPairs string) (string, error) {
 		}
 	}
 	return buff.String(), nil
+}
+
+// DiffSets works as Diff, but with another algo
+func DiffSets(savedPairs string, actualPairs string) (string, error) {
+	savedPairs = strings.Trim(savedPairs, " \n")
+	actualPairs = strings.Trim(actualPairs, " \n")
+
+	savedPairsSlice := strings.Split(savedPairs, "\n")
+	actualPairsSlice := strings.Split(actualPairs, "\n")
+
+	savedPairsSet := set.New()
+	if !(len(savedPairsSlice) == 1 && savedPairsSlice[0] == "") {
+		for _, element := range strings.Split(savedPairs, "\n") {
+			savedPairsSet.Add(element)
+		}
+	}
+
+	actualPairsSet := set.New()
+	if !(len(actualPairsSlice) == 1 && actualPairsSlice[0] == "") {
+		for _, element := range strings.Split(actualPairs, "\n") {
+			actualPairsSet.Add(element)
+		}
+	}
+
+	added := set.Difference(actualPairsSet, savedPairsSet)   // ADDED
+	deleted := set.Difference(savedPairsSet, actualPairsSet) // DELETED
+
+	var result string
+	if added.Size() > 0 {
+		for _, item := range added.List() {
+			result += "ADDED: " + item.(string) + "\n"
+		}
+	}
+	for _, item := range deleted.List() {
+		result += "DELETED: " + item.(string) + "\n"
+	}
+	return result, nil
 }
 
 // SaveNonEqualStringsToFiles should save two different stings to files

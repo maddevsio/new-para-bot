@@ -67,7 +67,7 @@ func checkDCEAndAlert(dce DCEChecker, name string) {
 		log.Printf("%v: No saved data. Seems the first run", name)
 	} else {
 		utils.SaveNonEqualStringsToFiles(name, savedPairs, actualPairs)
-		diff, err := utils.Diff(savedPairs, actualPairs)
+		diff, err := utils.DiffSets(savedPairs, actualPairs)
 		if err != nil {
 			log.Panic(err)
 		}
@@ -82,7 +82,7 @@ func checkDCEAndAlert(dce DCEChecker, name string) {
 			if err != nil {
 				log.Panic(err)
 			}
-			err = bot.SendMessageToTelegramChannel(config, name+": "+diff)
+			err = bot.SendMessageToTelegramChannel(config, name+"\n: "+diff)
 			if err != nil {
 				log.Panic(err)
 			}

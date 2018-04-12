@@ -1,10 +1,8 @@
 package utils
 
 import (
-	"fmt"
 	"testing"
 
-	"github.com/PieterD/diff"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -47,38 +45,43 @@ func TestDiff(t *testing.T) {
 	diff, err = Diff(savedPairs, actualPairs)
 	assert.NoError(t, err)
 	assert.Equal(t, "DELETED: 1\nADDED: 3\nADDED: PAIR4\n\n", diff)
+
+	// check one empty
+	savedPairs, actualPairs = "\n", "1\n2\n3\n"
+	diff, err = Diff(savedPairs, actualPairs)
+	assert.NoError(t, err)
+	assert.Equal(t, "ADDED: 1\n2\n3\n", diff)
+
+	// check one empty
+	savedPairs, actualPairs = "1\n2\n3\n", "\n"
+	diff, err = Diff(savedPairs, actualPairs)
+	assert.NoError(t, err)
+	assert.Equal(t, "DELETED: 1\n2\n3\n", diff)
 }
 
-func TestAnotherDiffer(t *testing.T) {
-	// Data
-	l := []string{
-		"linea",
-		"lineb",
-		"lineM",
-		"linec",
-	}
-	r := []string{
-		"linea",
-		"lineQ",
-		"linec",
-		"lineM",
-	}
-	// Diff l and r using Strings
-	d := diff.New(diff.Strings{
-		Left:  l,
-		Right: r,
-	})
-	// Print the diff
-	for i := range d {
-		switch d[i].Delta {
-		case diff.Both:
-			//fmt.Printf("  %s\n", l[d[i].Index])
-		case diff.Left:
-			fmt.Printf("- %s\n", l[d[i].Index])
-		case diff.Right:
-			fmt.Printf("+ %s\n", r[d[i].Index])
-		}
-	}
+func TestDiffSet(t *testing.T) {
+	savedPairs, actualPairs := "PAIR1\nPAIR2\n", "PAIR1\nPAIR2\n"
+	diff, err := DiffSets(savedPairs, actualPairs)
+	assert.NoError(t, err)
+	assert.Empty(t, diff)
+
+	savedPairs, actualPairs = "PAIR1\nPAIR3\nPAIR2\n", "PAIR1\nPAIR2\n"
+	diff, err = DiffSets(savedPairs, actualPairs)
+	assert.NoError(t, err)
+	assert.Equal(t, "DELETED: PAIR3\n", diff)
+
+	savedPairs, actualPairs = "PAIR1\nPAIR2\n", "PAIR1\nPAIR2\nPAIR3\n"
+	diff, err = DiffSets(savedPairs, actualPairs)
+	assert.NoError(t, err)
+	assert.Equal(t, "ADDED: PAIR3\n", diff)
+}
+
+func TestDiffSetEmptyRight(t *testing.T) {
+	savedPairs, actualPairs := "PAIR1\nPAIR2\n", ""
+	diff, err := DiffSets(savedPairs, actualPairs)
+	assert.NoError(t, err)
+	assert.Contains(t, diff, "DELETED: PAIR1\n")
+	assert.Contains(t, diff, "DELETED: PAIR2\n")
 }
 
 func TestSaveDiffedDataToFiles(t *testing.T) {
