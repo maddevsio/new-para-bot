@@ -31,6 +31,7 @@ func main() {
 	tidex := dce.NewTidex(&dao)
 	okex := dce.NewOkex(&dao)
 	huobi := dce.NewHuobi(&dao)
+	kraken := dce.NewKraken(&dao)
 	for {
 		log.Print("Checking...")
 		checkDCEAndAlert(binance, binance.Name)
@@ -42,6 +43,7 @@ func main() {
 		checkDCEAndAlert(tidex, tidex.Name)
 		checkDCEAndAlert(okex, okex.Name)
 		checkDCEAndAlert(huobi, huobi.Name)
+		checkDCEAndAlert(kraken, kraken.Name)
 		log.Print("Sleeping...")
 		time.Sleep(60 * time.Second)
 	}
@@ -89,7 +91,7 @@ func checkDCEAndAlert(dce DCEChecker, name string) {
 			if err != nil {
 				log.Panic(err)
 			}
-			err = bot.SendMessageToTelegramChannel(config, name+":\n "+diff)
+			err = bot.SendMessageToTelegramChannel(config, name+":\n"+diff)
 			if err != nil {
 				log.Panic(err)
 			}
