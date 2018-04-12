@@ -61,6 +61,11 @@ func checkDCEAndAlert(dce DCEChecker, name string) {
 
 	log.Printf("%v: Pairs length: %v, %v", name, len(actualPairs), len(savedPairs))
 
+	if actualPairs == "" {
+		log.Printf("%v: actual pairth length is 0. seems did not get the data from API, skipping...", name)
+		return
+	}
+
 	if savedPairs == "" {
 		err = dce.UpdatePairs(actualPairs)
 		if err != nil {
