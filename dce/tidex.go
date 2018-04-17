@@ -15,6 +15,7 @@ type Tidex struct {
 	gorm.Model
 	Name      string
 	LastPairs string
+	Website   string
 	dao       *DAO   `gorm:"-"`
 	URL       string `gorm:"-"`
 }
@@ -22,9 +23,10 @@ type Tidex struct {
 // NewTidex is a Tidex struct constructor
 func NewTidex(dao *DAO) *Tidex {
 	return &Tidex{
-		URL:  "https://api.tidex.com/api/3/info",
-		Name: "Tidex",
-		dao:  dao,
+		URL:     "https://api.tidex.com/api/3/info",
+		Name:    "Tidex",
+		Website: "https://tidex.com/",
+		dao:     dao,
 	}
 }
 

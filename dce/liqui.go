@@ -15,6 +15,7 @@ type Liqui struct {
 	gorm.Model
 	Name      string
 	LastPairs string
+	Website   string
 	dao       *DAO   `gorm:"-"`
 	URL       string `gorm:"-"`
 }
@@ -22,9 +23,10 @@ type Liqui struct {
 // NewLiqui is a Liqui struct constructor
 func NewLiqui(dao *DAO) *Liqui {
 	return &Liqui{
-		URL:  "https://api.liqui.io/api/3/info",
-		Name: "Liqui",
-		dao:  dao,
+		URL:     "https://api.liqui.io/api/3/info",
+		Name:    "Liqui",
+		Website: "https://liqui.io/",
+		dao:     dao,
 	}
 }
 

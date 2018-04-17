@@ -15,6 +15,7 @@ type Wex struct {
 	gorm.Model
 	Name      string
 	LastPairs string
+	Website   string
 	dao       *DAO   `gorm:"-"`
 	URL       string `gorm:"-"`
 }
@@ -22,9 +23,10 @@ type Wex struct {
 // NewWex is a Wex struct constructor
 func NewWex(dao *DAO) *Wex {
 	return &Wex{
-		URL:  "https://wex.nz/api/3/info",
-		Name: "Wex",
-		dao:  dao,
+		URL:     "https://wex.nz/api/3/info",
+		Name:    "Wex",
+		Website: "https://wex.nz/",
+		dao:     dao,
 	}
 }
 

@@ -15,6 +15,7 @@ type Livecoin struct {
 	gorm.Model
 	Name      string
 	LastPairs string
+	Website   string
 	dao       *DAO   `gorm:"-"`
 	URL       string `gorm:"-"`
 }
@@ -22,9 +23,10 @@ type Livecoin struct {
 // NewLivecoin is a Liqui struct constructor
 func NewLivecoin(dao *DAO) *Livecoin {
 	return &Livecoin{
-		URL:  "https://api.livecoin.net/exchange/ticker",
-		Name: "Livecoin",
-		dao:  dao,
+		URL:     "https://api.livecoin.net/exchange/ticker",
+		Name:    "Livecoin",
+		Website: "https://www.livecoin.net/",
+		dao:     dao,
 	}
 }
 

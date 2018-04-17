@@ -15,6 +15,7 @@ type Okex struct {
 	gorm.Model
 	Name      string
 	LastPairs string
+	Website   string
 	dao       *DAO   `gorm:"-"`
 	URL       string `gorm:"-"`
 }
@@ -22,9 +23,10 @@ type Okex struct {
 // NewOkex is a Hibtc struct constructor
 func NewOkex(dao *DAO) *Okex {
 	return &Okex{
-		URL:  "https://www.okex.com/v2/spot/markets/index-tickers?limit=100000000",
-		Name: "Okex",
-		dao:  dao,
+		URL:     "https://www.okex.com/v2/spot/markets/index-tickers?limit=100000000",
+		Name:    "Okex",
+		Website: "https://www.okex.com/",
+		dao:     dao,
 	}
 }
 

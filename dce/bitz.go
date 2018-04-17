@@ -15,6 +15,7 @@ type Bitz struct {
 	gorm.Model
 	Name      string
 	LastPairs string
+	Website   string
 	dao       *DAO   `gorm:"-"`
 	URL       string `gorm:"-"`
 }
@@ -22,9 +23,10 @@ type Bitz struct {
 // NewBitz is a Bitz struct constructor
 func NewBitz(dao *DAO) *Bitz {
 	return &Bitz{
-		URL:  "https://www.bit-z.com/api_v1/tickerall",
-		Name: "Bitz",
-		dao:  dao,
+		URL:     "https://www.bit-z.com/api_v1/tickerall",
+		Name:    "Bitz",
+		Website: "https://www.bit-z.com/",
+		dao:     dao,
 	}
 }
 

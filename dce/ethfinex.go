@@ -15,6 +15,7 @@ type Ethfinex struct {
 	gorm.Model
 	Name        string
 	LastPairs   string
+	Website     string
 	dao         *DAO   `gorm:"-"`
 	URL         string `gorm:"-"`
 	RandomParam string `gorm:"-"` // need to add this to the URL to avoid cached responces
@@ -23,9 +24,10 @@ type Ethfinex struct {
 // NewEthfinex is a Ethfinex struct constructor
 func NewEthfinex(dao *DAO) *Ethfinex {
 	return &Ethfinex{
-		URL:  "https://api.ethfinex.com/v1/symbols",
-		Name: "Ethfinex",
-		dao:  dao,
+		URL:     "https://api.ethfinex.com/v1/symbols",
+		Name:    "Ethfinex",
+		Website: "https://www.ethfinex.com/",
+		dao:     dao,
 	}
 }
 

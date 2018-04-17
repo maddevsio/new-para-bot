@@ -37,25 +37,25 @@ func main() {
 	cex := dce.NewCex(&dao)
 	for {
 		log.Print("Checking...")
-		checkDCEAndAlert(binance, binance.Name)
-		checkDCEAndAlert(hibtc, hibtc.Name)
-		checkDCEAndAlert(liqui, liqui.Name)
-		checkDCEAndAlert(ethfinex, ethfinex.Name)
+		checkDCEAndAlert(binance, binance.Name, binance.Website)
+		checkDCEAndAlert(hibtc, hibtc.Name, hibtc.Website)
+		checkDCEAndAlert(liqui, liqui.Name, liqui.Website)
+		checkDCEAndAlert(ethfinex, ethfinex.Name, ethfinex.Website)
 		//checkDCEAndAlert(kucoin, kucoin.Name)
-		checkDCEAndAlert(livecoin, livecoin.Name)
-		checkDCEAndAlert(tidex, tidex.Name)
-		checkDCEAndAlert(okex, okex.Name)
-		checkDCEAndAlert(huobi, huobi.Name)
-		checkDCEAndAlert(kraken, kraken.Name)
-		checkDCEAndAlert(bitz, bitz.Name)
-		checkDCEAndAlert(wex, wex.Name)
-		checkDCEAndAlert(cex, cex.Name)
+		checkDCEAndAlert(livecoin, livecoin.Name, livecoin.Website)
+		checkDCEAndAlert(tidex, tidex.Name, tidex.Website)
+		checkDCEAndAlert(okex, okex.Name, okex.Website)
+		checkDCEAndAlert(huobi, huobi.Name, huobi.Website)
+		checkDCEAndAlert(kraken, kraken.Name, kraken.Website)
+		checkDCEAndAlert(bitz, bitz.Name, bitz.Website)
+		checkDCEAndAlert(wex, wex.Name, wex.Website)
+		checkDCEAndAlert(cex, cex.Name, cex.Website)
 		log.Print("Sleeping...")
 		time.Sleep(60 * time.Second)
 	}
 }
 
-func checkDCEAndAlert(dce DCEChecker, name string) {
+func checkDCEAndAlert(dce DCEChecker, name string, url string) {
 	// get actual pairs and check
 	actualPairs, err := dce.GetListOfActualPairs()
 	if err != nil {
@@ -97,7 +97,7 @@ func checkDCEAndAlert(dce DCEChecker, name string) {
 			if err != nil {
 				log.Panic(err)
 			}
-			err = bot.SendMessageToTelegramChannel(config, name+":\n"+diff)
+			err = bot.SendMessageToTelegramChannel(config, name+"\n"+url+"\n"+diff)
 			if err != nil {
 				log.Panic(err)
 			}

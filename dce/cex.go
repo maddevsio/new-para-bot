@@ -15,6 +15,7 @@ type Cex struct {
 	gorm.Model
 	Name      string
 	LastPairs string
+	Website   string
 	dao       *DAO   `gorm:"-"`
 	URL       string `gorm:"-"`
 }
@@ -22,9 +23,10 @@ type Cex struct {
 // NewCex is a Cex struct constructor
 func NewCex(dao *DAO) *Cex {
 	return &Cex{
-		URL:  "https://cex.io/api/currency_limits",
-		Name: "Cex",
-		dao:  dao,
+		URL:     "https://cex.io/api/currency_limits",
+		Name:    "Cex",
+		Website: "https://cex.io/",
+		dao:     dao,
 	}
 }
 

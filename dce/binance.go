@@ -12,6 +12,7 @@ type Binance struct {
 	gorm.Model
 	Name        string
 	LastPairs   string
+	Website     string
 	dao         *DAO   `gorm:"-"`
 	URL         string `gorm:"-"`
 	RandomParam string `gorm:"-"` // need to add this to the URL to avoid cached responces
@@ -20,9 +21,10 @@ type Binance struct {
 // NewBinance is a Binance struct constructor
 func NewBinance(dao *DAO) *Binance {
 	return &Binance{
-		URL:  "https://api.binance.com/api/v1/exchangeInfo",
-		Name: "Binance",
-		dao:  dao,
+		URL:     "https://api.binance.com/api/v1/exchangeInfo",
+		Name:    "Binance",
+		Website: "https://www.binance.com/",
+		dao:     dao,
 	}
 }
 

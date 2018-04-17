@@ -15,6 +15,7 @@ type Kraken struct {
 	gorm.Model
 	Name      string
 	LastPairs string
+	Website   string
 	dao       *DAO   `gorm:"-"`
 	URL       string `gorm:"-"`
 }
@@ -22,9 +23,10 @@ type Kraken struct {
 // NewKraken is a Kraken struct constructor
 func NewKraken(dao *DAO) *Kraken {
 	return &Kraken{
-		URL:  "https://api.kraken.com/0/public/AssetPairs",
-		Name: "Kraken",
-		dao:  dao,
+		URL:     "https://api.kraken.com/0/public/AssetPairs",
+		Name:    "Kraken",
+		Website: "https://www.kraken.com/",
+		dao:     dao,
 	}
 }
 

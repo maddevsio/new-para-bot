@@ -15,6 +15,7 @@ type Hibtc struct {
 	gorm.Model
 	Name        string
 	LastPairs   string
+	Website     string
 	dao         *DAO   `gorm:"-"`
 	URL         string `gorm:"-"`
 	RandomParam string `gorm:"-"` // need to add this to the URL to avoid cached responces
@@ -23,9 +24,10 @@ type Hibtc struct {
 // NewHibtc is a Hibtc struct constructor
 func NewHibtc(dao *DAO) *Hibtc {
 	return &Hibtc{
-		URL:  "https://api.hitbtc.com/api/2/public/symbol",
-		Name: "Hibtc",
-		dao:  dao,
+		URL:     "https://api.hitbtc.com/api/2/public/symbol",
+		Name:    "Hibtc",
+		Website: "https://hitbtc.com/",
+		dao:     dao,
 	}
 }
 

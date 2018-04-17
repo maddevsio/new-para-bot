@@ -15,6 +15,7 @@ type Huobi struct {
 	gorm.Model
 	Name      string
 	LastPairs string
+	Website   string
 	dao       *DAO   `gorm:"-"`
 	URL       string `gorm:"-"`
 }
@@ -22,9 +23,10 @@ type Huobi struct {
 // NewHuobi is a Huobi struct constructor
 func NewHuobi(dao *DAO) *Huobi {
 	return &Huobi{
-		URL:  "https://api.huobi.pro/v1/common/symbols",
-		Name: "Huobi",
-		dao:  dao,
+		URL:     "https://api.huobi.pro/v1/common/symbols",
+		Name:    "Huobi",
+		Website: "https://www.huobi.pro/",
+		dao:     dao,
 	}
 }
 
