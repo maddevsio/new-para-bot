@@ -34,6 +34,7 @@ func main() {
 	kraken := dce.NewKraken(&dao)
 	bitz := dce.NewBitz(&dao)
 	wex := dce.NewWex(&dao)
+	cex := dce.NewCex(&dao)
 	for {
 		log.Print("Checking...")
 		checkDCEAndAlert(binance, binance.Name)
@@ -48,6 +49,7 @@ func main() {
 		checkDCEAndAlert(kraken, kraken.Name)
 		checkDCEAndAlert(bitz, bitz.Name)
 		checkDCEAndAlert(wex, wex.Name)
+		checkDCEAndAlert(cex, cex.Name)
 		log.Print("Sleeping...")
 		time.Sleep(60 * time.Second)
 	}
