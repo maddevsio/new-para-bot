@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  name = "github.com/PieterD/diff"
-  packages = ["."]
-  revision = "27e3e571c30d3ae49acfbc8b01f8dcb112cdc880"
-  version = "0.9"
-
-[[projects]]
   name = "github.com/antonholmquist/jason"
   packages = ["."]
   revision = "c23cef7eaa75a6a5b8810120e167bd590d8fd2ab"
@@ -127,6 +121,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e0e8724097d1e7c3e1fc3ad06552f74e0142cfdaa7aa7788e8923b8a4527da3c"
+  inputs-digest = "089834294fe04953e0efbc5c4875dde9fdd8a76c8d91994407c4370970f928bc"
   solver-name = "gps-cdcl"
   solver-version = 1
