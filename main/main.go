@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	raven "github.com/getsentry/raven-go"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/maddevsio/new-para-bot/bot"
 	"github.com/maddevsio/new-para-bot/dce"
@@ -18,6 +19,12 @@ type DCEChecker interface {
 }
 
 func main() {
+	raven.CapturePanicAndWait(func() {
+		do()
+	}, nil)
+}
+
+func do() {
 	// we can use db inside the container
 	// because this is working table, no need
 	// to have historical data
