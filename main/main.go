@@ -35,6 +35,7 @@ func do() {
 	bitz := dce.NewBitz(&dao)
 	wex := dce.NewWex(&dao)
 	cex := dce.NewCex(&dao)
+	cryptopia := dce.NewCryptopia(&dao)
 	for {
 		log.Print("Checking...")
 		checkDCEAndAlert(binance)
@@ -50,6 +51,7 @@ func do() {
 		checkDCEAndAlert(bitz)
 		checkDCEAndAlert(wex)
 		checkDCEAndAlert(cex)
+		checkDCEAndAlert(cryptopia)
 		log.Print("Sleeping...")
 		time.Sleep(60 * time.Second)
 	}
