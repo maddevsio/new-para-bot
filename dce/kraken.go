@@ -13,21 +13,17 @@ import (
 // API manual https://www.kraken.com/en-us/help/api#public-market-data
 type Kraken struct {
 	gorm.Model
-	Name      string
-	LastPairs string
-	Website   string
-	dao       *DAO   `gorm:"-"`
-	URL       string `gorm:"-"`
+	Base
 }
 
 // NewKraken is a Kraken struct constructor
 func NewKraken(dao *DAO) *Kraken {
-	return &Kraken{
-		URL:     "https://api.kraken.com/0/public/AssetPairs",
-		Name:    "Kraken",
-		Website: "https://www.kraken.com/",
-		dao:     dao,
-	}
+	kraken := &Kraken{}
+	kraken.URL = "https://api.kraken.com/0/public/AssetPairs"
+	kraken.Name = "Kraken"
+	kraken.Website = "https://www.kraken.com/"
+	kraken.DAO = dao
+	return kraken
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs from api.liqui.io
@@ -57,17 +53,4 @@ func (k *Kraken) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (k *Kraken) GetListOfSavedPairs() (string, error) {
-	err := k.dao.GetLast(k)
-	return k.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (k *Kraken) UpdatePairs(pairs string) error {
-	k.LastPairs = pairs
-	err := k.dao.DeleteAllAndCreate(k)
-	return err
 }

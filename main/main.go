@@ -11,13 +11,6 @@ import (
 	"github.com/maddevsio/new-para-bot/utils"
 )
 
-// DCEChecker used in checkBinanceAndAlert
-type DCEChecker interface {
-	GetListOfActualPairs() (string, error)
-	GetListOfSavedPairs() (string, error)
-	UpdatePairs(pairs string) error
-}
-
 func main() {
 	raven.CapturePanicAndWait(func() {
 		do()
@@ -44,73 +37,73 @@ func do() {
 	cex := dce.NewCex(&dao)
 	for {
 		log.Print("Checking...")
-		checkDCEAndAlert(binance, binance.Name, binance.Website)
-		checkDCEAndAlert(hibtc, hibtc.Name, hibtc.Website)
-		checkDCEAndAlert(liqui, liqui.Name, liqui.Website)
-		checkDCEAndAlert(ethfinex, ethfinex.Name, ethfinex.Website)
-		//checkDCEAndAlert(kucoin, kucoin.Name)
-		checkDCEAndAlert(livecoin, livecoin.Name, livecoin.Website)
-		checkDCEAndAlert(tidex, tidex.Name, tidex.Website)
-		checkDCEAndAlert(okex, okex.Name, okex.Website)
-		checkDCEAndAlert(huobi, huobi.Name, huobi.Website)
-		checkDCEAndAlert(kraken, kraken.Name, kraken.Website)
-		checkDCEAndAlert(bitz, bitz.Name, bitz.Website)
-		checkDCEAndAlert(wex, wex.Name, wex.Website)
-		checkDCEAndAlert(cex, cex.Name, cex.Website)
+		checkDCEAndAlert(binance)
+		checkDCEAndAlert(hibtc)
+		checkDCEAndAlert(liqui)
+		checkDCEAndAlert(ethfinex)
+		//checkDCEAndAlert(kucoin)
+		checkDCEAndAlert(livecoin)
+		checkDCEAndAlert(tidex)
+		checkDCEAndAlert(okex)
+		checkDCEAndAlert(huobi)
+		checkDCEAndAlert(kraken)
+		checkDCEAndAlert(bitz)
+		checkDCEAndAlert(wex)
+		checkDCEAndAlert(cex)
 		log.Print("Sleeping...")
 		time.Sleep(60 * time.Second)
 	}
 }
 
-func checkDCEAndAlert(dce DCEChecker, name string, url string) {
+func checkDCEAndAlert(dce dce.DCEChecker) {
 	// get actual pairs and check
 	actualPairs, err := dce.GetListOfActualPairs()
 	if err != nil {
 		log.Panic(err)
 	}
 
-	savedPairs, err := dce.GetListOfSavedPairs()
+	savedPairs, err := dce.GetDAO().GetListOfSavedPairs(dce)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	log.Printf("%v: Pairs length: %v, %v", name, len(actualPairs), len(savedPairs))
+	log.Printf("%v: Pairs length: %v, %v", dce.GetName(), len(actualPairs), len(savedPairs))
 
 	if actualPairs == "" {
-		log.Printf("%v: actual pairth length is 0. seems did not get the data from API, skipping...", name)
+		log.Printf("%v: actual pairth length is 0. seems did not get the data from API, skipping...", dce.GetName())
 		return
 	}
 
 	if savedPairs == "" {
-		err = dce.UpdatePairs(actualPairs)
+		err = dce.GetDAO().UpdatePairsAndSave(dce, actualPairs)
 		if err != nil {
 			log.Panic(err)
 		}
-		log.Printf("%v: No saved data. Seems the first run", name)
+		log.Printf("%v: No saved data. Seems the first run", dce.GetName())
 	} else {
-		utils.SaveNonEqualStringsToFiles(name, savedPairs, actualPairs)
+		utils.SaveNonEqualStringsToFiles(dce.GetName(), savedPairs, actualPairs)
 		diff, err := utils.DiffSets(savedPairs, actualPairs)
 		if err != nil {
 			log.Panic(err)
 		}
 		if diff != "" {
-			log.Printf("%v: We have diffs", name)
-			err = dce.UpdatePairs(actualPairs)
+			log.Printf("%v: We have diffs", dce.GetName())
+			err = dce.GetDAO().UpdatePairsAndSave(dce, actualPairs)
 			if err != nil {
 				log.Panic(err)
 			}
-			log.Printf("%v: Pairs updated", name)
+			log.Printf("%v: Pairs updated", dce.GetName())
 			config, err := bot.GetTelegramConfig("")
 			if err != nil {
 				log.Panic(err)
 			}
-			err = bot.SendMessageToTelegramChannel(config, name+"\n"+url+"\n"+diff)
+			err = bot.SendMessageToTelegramChannel(config, dce.GetName()+"\n"+dce.GetWebsite()+"\n"+diff)
 			if err != nil {
 				log.Panic(err)
 			}
-			log.Printf("%v: Bot message sent", name)
+			log.Printf("%v: Bot message sent", dce.GetName())
 		} else {
-			log.Printf("%v No diffs", name)
+			log.Printf("%v No diffs", dce.GetName())
 		}
 	}
 }

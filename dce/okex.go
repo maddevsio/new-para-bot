@@ -13,21 +13,17 @@ import (
 // API manual https://github.com/okcoin-okex/API-docs-OKEx.com
 type Okex struct {
 	gorm.Model
-	Name      string
-	LastPairs string
-	Website   string
-	dao       *DAO   `gorm:"-"`
-	URL       string `gorm:"-"`
+	Base
 }
 
 // NewOkex is a Hibtc struct constructor
 func NewOkex(dao *DAO) *Okex {
-	return &Okex{
-		URL:     "https://www.okex.com/v2/spot/markets/index-tickers?limit=100000000",
-		Name:    "Okex",
-		Website: "https://www.okex.com/",
-		dao:     dao,
-	}
+	okex := &Okex{}
+	okex.URL = "https://www.okex.com/v2/spot/markets/index-tickers?limit=100000000"
+	okex.Name = "Okex"
+	okex.Website = "https://www.okex.com/"
+	okex.DAO = dao
+	return okex
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs from api.hitbtc.com
@@ -49,17 +45,4 @@ func (o *Okex) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (o *Okex) GetListOfSavedPairs() (string, error) {
-	err := o.dao.GetLast(o)
-	return o.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (o *Okex) UpdatePairs(pairs string) error {
-	o.LastPairs = pairs
-	err := o.dao.DeleteAllAndCreate(o)
-	return err
 }

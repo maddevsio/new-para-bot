@@ -13,21 +13,17 @@ import (
 // API manual https://tidex.com/exchange/public-api
 type Tidex struct {
 	gorm.Model
-	Name      string
-	LastPairs string
-	Website   string
-	dao       *DAO   `gorm:"-"`
-	URL       string `gorm:"-"`
+	Base
 }
 
 // NewTidex is a Tidex struct constructor
 func NewTidex(dao *DAO) *Tidex {
-	return &Tidex{
-		URL:     "https://api.tidex.com/api/3/info",
-		Name:    "Tidex",
-		Website: "https://tidex.com/",
-		dao:     dao,
-	}
+	tidex := &Tidex{}
+	tidex.URL = "https://api.tidex.com/api/3/info"
+	tidex.Name = "Tidex"
+	tidex.Website = "https://tidex.com/"
+	tidex.DAO = dao
+	return tidex
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs from api.liqui.io
@@ -57,17 +53,4 @@ func (t *Tidex) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (t *Tidex) GetListOfSavedPairs() (string, error) {
-	err := t.dao.GetLast(t)
-	return t.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (t *Tidex) UpdatePairs(pairs string) error {
-	t.LastPairs = pairs
-	err := t.dao.DeleteAllAndCreate(t)
-	return err
 }

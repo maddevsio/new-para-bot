@@ -13,24 +13,20 @@ import (
 // API manual https://api.huobi.pro/
 type Huobi struct {
 	gorm.Model
-	Name      string
-	LastPairs string
-	Website   string
-	dao       *DAO   `gorm:"-"`
-	URL       string `gorm:"-"`
+	Base
 }
 
 // NewHuobi is a Huobi struct constructor
 func NewHuobi(dao *DAO) *Huobi {
-	return &Huobi{
-		URL:     "https://api.huobi.pro/v1/common/symbols",
-		Name:    "Huobi",
-		Website: "https://www.huobi.pro/",
-		dao:     dao,
-	}
+	huobi := &Huobi{}
+	huobi.URL = "https://api.huobi.pro/v1/common/symbols"
+	huobi.Name = "Huobi"
+	huobi.Website = "https://www.huobi.pro/"
+	huobi.DAO = dao
+	return huobi
 }
 
-// GetListOfActualPairs makes a call to API and returns \n separated pairs from api.hitbtc.com
+// GetListOfActualPairs makes a call to API and returns \n separated pairs
 func (h *Huobi) GetListOfActualPairs() (string, error) {
 	resp, err := resty.R().Get(h.URL)
 	if err != nil {
@@ -50,17 +46,4 @@ func (h *Huobi) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (h *Huobi) GetListOfSavedPairs() (string, error) {
-	err := h.dao.GetLast(h)
-	return h.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (h *Huobi) UpdatePairs(pairs string) error {
-	h.LastPairs = pairs
-	err := h.dao.DeleteAllAndCreate(h)
-	return err
 }

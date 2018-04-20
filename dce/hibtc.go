@@ -13,22 +13,17 @@ import (
 // API manual https://api.hitbtc.com/
 type Hibtc struct {
 	gorm.Model
-	Name        string
-	LastPairs   string
-	Website     string
-	dao         *DAO   `gorm:"-"`
-	URL         string `gorm:"-"`
-	RandomParam string `gorm:"-"` // need to add this to the URL to avoid cached responces
+	Base
 }
 
 // NewHibtc is a Hibtc struct constructor
 func NewHibtc(dao *DAO) *Hibtc {
-	return &Hibtc{
-		URL:     "https://api.hitbtc.com/api/2/public/symbol",
-		Name:    "Hibtc",
-		Website: "https://hitbtc.com/",
-		dao:     dao,
-	}
+	hibtc := &Hibtc{}
+	hibtc.URL = "https://api.hitbtc.com/api/2/public/symbol"
+	hibtc.Name = "Hibtc"
+	hibtc.Website = "https://hitbtc.com/"
+	hibtc.DAO = dao
+	return hibtc
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs from api.hitbtc.com
@@ -50,17 +45,4 @@ func (h *Hibtc) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (h *Hibtc) GetListOfSavedPairs() (string, error) {
-	err := h.dao.GetLast(h)
-	return h.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (h *Hibtc) UpdatePairs(pairs string) error {
-	h.LastPairs = pairs
-	err := h.dao.DeleteAllAndCreate(h)
-	return err
 }

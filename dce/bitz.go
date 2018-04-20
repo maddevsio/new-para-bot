@@ -13,21 +13,17 @@ import (
 // API manual https://api.liqui.io/
 type Bitz struct {
 	gorm.Model
-	Name      string
-	LastPairs string
-	Website   string
-	dao       *DAO   `gorm:"-"`
-	URL       string `gorm:"-"`
+	Base
 }
 
 // NewBitz is a Bitz struct constructor
 func NewBitz(dao *DAO) *Bitz {
-	return &Bitz{
-		URL:     "https://www.bit-z.com/api_v1/tickerall",
-		Name:    "Bitz",
-		Website: "https://www.bit-z.com/",
-		dao:     dao,
-	}
+	bits := &Bitz{}
+	bits.URL = "https://www.bit-z.com/api_v1/tickerall"
+	bits.Name = "Bitz"
+	bits.Website = "https://www.bit-z.com/"
+	bits.DAO = dao
+	return bits
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs from api.liqui.io
@@ -57,17 +53,4 @@ func (b *Bitz) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (b *Bitz) GetListOfSavedPairs() (string, error) {
-	err := b.dao.GetLast(b)
-	return b.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (b *Bitz) UpdatePairs(pairs string) error {
-	b.LastPairs = pairs
-	err := b.dao.DeleteAllAndCreate(b)
-	return err
 }

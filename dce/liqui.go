@@ -13,21 +13,17 @@ import (
 // API manual https://api.liqui.io/
 type Liqui struct {
 	gorm.Model
-	Name      string
-	LastPairs string
-	Website   string
-	dao       *DAO   `gorm:"-"`
-	URL       string `gorm:"-"`
+	Base
 }
 
 // NewLiqui is a Liqui struct constructor
 func NewLiqui(dao *DAO) *Liqui {
-	return &Liqui{
-		URL:     "https://api.liqui.io/api/3/info",
-		Name:    "Liqui",
-		Website: "https://liqui.io/",
-		dao:     dao,
-	}
+	liqui := &Liqui{}
+	liqui.URL = "https://api.liqui.io/api/3/info"
+	liqui.Name = "Liqui"
+	liqui.Website = "https://liqui.io/"
+	liqui.DAO = dao
+	return liqui
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs from api.liqui.io
@@ -57,17 +53,4 @@ func (l *Liqui) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (l *Liqui) GetListOfSavedPairs() (string, error) {
-	err := l.dao.GetLast(l)
-	return l.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (l *Liqui) UpdatePairs(pairs string) error {
-	l.LastPairs = pairs
-	err := l.dao.DeleteAllAndCreate(l)
-	return err
 }

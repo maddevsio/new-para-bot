@@ -31,11 +31,11 @@ func TestBinanceApi(t *testing.T) {
 	assert.Equal(t, 0, count)
 
 	// update binance struct with newly get pairs from API
-	err = binance.UpdatePairs(actualPairs)
+	err = dao.UpdatePairsAndSave(binance, actualPairs)
 	assert.NoError(t, err)
 
 	// simulate the case when we are getting the data from storage
-	savedPairs, err := binance.GetListOfSavedPairs()
+	savedPairs, err := dao.GetListOfSavedPairs(binance)
 	assert.NoError(t, err)
 	assert.Equal(t, actualPairs, savedPairs)
 

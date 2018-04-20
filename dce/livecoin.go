@@ -13,21 +13,17 @@ import (
 // API manual https://www.livecoin.net/api?lang=ru
 type Livecoin struct {
 	gorm.Model
-	Name      string
-	LastPairs string
-	Website   string
-	dao       *DAO   `gorm:"-"`
-	URL       string `gorm:"-"`
+	Base
 }
 
 // NewLivecoin is a Liqui struct constructor
 func NewLivecoin(dao *DAO) *Livecoin {
-	return &Livecoin{
-		URL:     "https://api.livecoin.net/exchange/ticker",
-		Name:    "Livecoin",
-		Website: "https://www.livecoin.net/",
-		dao:     dao,
-	}
+	livecoin := &Livecoin{}
+	livecoin.URL = "https://api.livecoin.net/exchange/ticker"
+	livecoin.Name = "Livecoin"
+	livecoin.Website = "https://www.livecoin.net/"
+	livecoin.DAO = dao
+	return livecoin
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs
@@ -49,17 +45,4 @@ func (l *Livecoin) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (l *Livecoin) GetListOfSavedPairs() (string, error) {
-	err := l.dao.GetLast(l)
-	return l.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (l *Livecoin) UpdatePairs(pairs string) error {
-	l.LastPairs = pairs
-	err := l.dao.DeleteAllAndCreate(l)
-	return err
 }

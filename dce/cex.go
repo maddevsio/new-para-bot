@@ -13,21 +13,17 @@ import (
 // API manual https://cex.io/rest-api
 type Cex struct {
 	gorm.Model
-	Name      string
-	LastPairs string
-	Website   string
-	dao       *DAO   `gorm:"-"`
-	URL       string `gorm:"-"`
+	Base
 }
 
 // NewCex is a Cex struct constructor
 func NewCex(dao *DAO) *Cex {
-	return &Cex{
-		URL:     "https://cex.io/api/currency_limits",
-		Name:    "Cex",
-		Website: "https://cex.io/",
-		dao:     dao,
-	}
+	cex := &Cex{}
+	cex.URL = "https://cex.io/api/currency_limits"
+	cex.Name = "Cex"
+	cex.Website = "https://cex.io/"
+	cex.DAO = dao
+	return cex
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs
@@ -51,17 +47,4 @@ func (k *Cex) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (k *Cex) GetListOfSavedPairs() (string, error) {
-	err := k.dao.GetLast(k)
-	return k.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (k *Cex) UpdatePairs(pairs string) error {
-	k.LastPairs = pairs
-	err := k.dao.DeleteAllAndCreate(k)
-	return err
 }

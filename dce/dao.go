@@ -51,6 +51,19 @@ func (dao *DAO) GetLast(obj interface{}) error {
 	return db.Error
 }
 
+// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
+func (dao *DAO) GetListOfSavedPairs(obj DCEChecker) (string, error) {
+	err := dao.GetLast(obj)
+	return obj.GetPairs(), err
+}
+
+// UpdatePairsAndSave returns the list of previously saved pairs, stored in sqlite
+func (dao *DAO) UpdatePairsAndSave(obj DCEChecker, pairs string) error {
+	obj.UpdatePairs(pairs)
+	err := dao.DeleteAllAndCreate(obj)
+	return err
+}
+
 func (dao *DAO) getDB(obj interface{}) *gorm.DB {
 	db, err := gorm.Open("sqlite3", dao.DBPath)
 	if err != nil {

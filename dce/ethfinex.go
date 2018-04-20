@@ -13,22 +13,17 @@ import (
 // API manual https://www.ethfinex.com/api_docs
 type Ethfinex struct {
 	gorm.Model
-	Name        string
-	LastPairs   string
-	Website     string
-	dao         *DAO   `gorm:"-"`
-	URL         string `gorm:"-"`
-	RandomParam string `gorm:"-"` // need to add this to the URL to avoid cached responces
+	Base
 }
 
 // NewEthfinex is a Ethfinex struct constructor
 func NewEthfinex(dao *DAO) *Ethfinex {
-	return &Ethfinex{
-		URL:     "https://api.ethfinex.com/v1/symbols",
-		Name:    "Ethfinex",
-		Website: "https://www.ethfinex.com/",
-		dao:     dao,
-	}
+	ethfinex := &Ethfinex{}
+	ethfinex.URL = "https://api.ethfinex.com/v1/symbols"
+	ethfinex.Name = "Ethfinex"
+	ethfinex.Website = "https://www.ethfinex.com/"
+	ethfinex.DAO = dao
+	return ethfinex
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs
@@ -50,17 +45,4 @@ func (e *Ethfinex) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "\n") + "\n"
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (e *Ethfinex) GetListOfSavedPairs() (string, error) {
-	err := e.dao.GetLast(e)
-	return e.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (e *Ethfinex) UpdatePairs(pairs string) error {
-	e.LastPairs = pairs
-	err := e.dao.DeleteAllAndCreate(e)
-	return err
 }

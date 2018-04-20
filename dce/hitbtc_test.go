@@ -24,11 +24,11 @@ func TestHitbtc(t *testing.T) {
 	assert.Equal(t, 0, count)
 
 	// update binance struct with newly get pairs from API
-	err = hibtc.UpdatePairs(actualPairs)
+	err = dao.UpdatePairsAndSave(hibtc, actualPairs)
 	assert.NoError(t, err)
 
 	// simulate the case when we are getting the data from storage
-	savedPairs, err := hibtc.GetListOfSavedPairs()
+	savedPairs, err := dao.GetListOfSavedPairs(hibtc)
 	assert.NoError(t, err)
 	assert.Equal(t, actualPairs, savedPairs)
 

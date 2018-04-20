@@ -13,21 +13,17 @@ import (
 // API manual https://wex.nz/api/3/docs
 type Wex struct {
 	gorm.Model
-	Name      string
-	LastPairs string
-	Website   string
-	dao       *DAO   `gorm:"-"`
-	URL       string `gorm:"-"`
+	Base
 }
 
 // NewWex is a Wex struct constructor
 func NewWex(dao *DAO) *Wex {
-	return &Wex{
-		URL:     "https://wex.nz/api/3/info",
-		Name:    "Wex",
-		Website: "https://wex.nz/",
-		dao:     dao,
-	}
+	wex := &Wex{}
+	wex.URL = "https://wex.nz/api/3/info"
+	wex.Name = "Wex"
+	wex.Website = "https://wex.nz/"
+	wex.DAO = dao
+	return wex
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs
@@ -57,17 +53,4 @@ func (w *Wex) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (w *Wex) GetListOfSavedPairs() (string, error) {
-	err := w.dao.GetLast(w)
-	return w.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (w *Wex) UpdatePairs(pairs string) error {
-	w.LastPairs = pairs
-	err := w.dao.DeleteAllAndCreate(w)
-	return err
 }

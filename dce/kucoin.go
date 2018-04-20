@@ -13,19 +13,16 @@ import (
 // API manual https://kucoinapidocs.docs.apiary.io
 type Kucoin struct {
 	gorm.Model
-	Name      string
-	LastPairs string
-	dao       *DAO   `gorm:"-"`
-	URL       string `gorm:"-"`
+	Base
 }
 
 // NewKucoin is a Kucoin struct constructor
 func NewKucoin(dao *DAO) *Kucoin {
-	return &Kucoin{
-		URL:  "https://api.kucoin.com/v1/open/tick",
-		Name: "Kucoin",
-		dao:  dao,
-	}
+	kucoin := &Kucoin{}
+	kucoin.URL = "https://api.kucoin.com/v1/open/tick"
+	kucoin.Name = "Kucoin"
+	kucoin.DAO = dao
+	return kucoin
 }
 
 // GetListOfActualPairs makes a call to API and returns \n separated pairs
@@ -47,17 +44,4 @@ func (k *Kucoin) GetListOfActualPairs() (string, error) {
 	pairs = strings.Join(pairsSlice, "")
 
 	return pairs, nil
-}
-
-// GetListOfSavedPairs returns the list of previously saved pairs, stored in sqlite
-func (k *Kucoin) GetListOfSavedPairs() (string, error) {
-	err := k.dao.GetLast(k)
-	return k.LastPairs, err
-}
-
-// UpdatePairs returns the list of previously saved pairs, stored in sqlite
-func (k *Kucoin) UpdatePairs(pairs string) error {
-	k.LastPairs = pairs
-	err := k.dao.DeleteAllAndCreate(k)
-	return err
 }
