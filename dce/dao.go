@@ -16,7 +16,7 @@ func NewDAO(DBPath string) DAO {
 
 // Count returns the number of all Binance records. This should be 0 or 1
 func (dao *DAO) Count(obj interface{}) (int, error) {
-	db := dao.getDB(obj)
+	db := dao.GetDB(obj)
 	defer db.Close()
 	var count int
 	db.Model(obj).Count(&count)
@@ -25,7 +25,7 @@ func (dao *DAO) Count(obj interface{}) (int, error) {
 
 // DeleteAll deletes all data from Binance table
 func (dao *DAO) DeleteAll(obj interface{}) error {
-	db := dao.getDB(obj)
+	db := dao.GetDB(obj)
 	defer db.Close()
 	db.DropTable(obj)
 	return db.Error
@@ -37,7 +37,7 @@ func (dao *DAO) DeleteAllAndCreate(obj interface{}) error {
 	if err != nil {
 		return err
 	}
-	db := dao.getDB(obj)
+	db := dao.GetDB(obj)
 	defer db.Close()
 	db.Create(obj)
 	return db.Error
@@ -45,7 +45,7 @@ func (dao *DAO) DeleteAllAndCreate(obj interface{}) error {
 
 // GetLast returns the last object form table
 func (dao *DAO) GetLast(obj interface{}) error {
-	db := dao.getDB(obj)
+	db := dao.GetDB(obj)
 	defer db.Close()
 	db.Last(obj)
 	return db.Error
@@ -64,7 +64,7 @@ func (dao *DAO) UpdatePairsAndSave(obj DCEChecker, pairs string) error {
 	return err
 }
 
-func (dao *DAO) getDB(obj interface{}) *gorm.DB {
+func (dao *DAO) GetDB(obj interface{}) *gorm.DB {
 	db, err := gorm.Open("sqlite3", dao.DBPath)
 	if err != nil {
 		panic(err)

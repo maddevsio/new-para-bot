@@ -8,104 +8,142 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/maddevsio/new-para-bot/bot"
 	"github.com/maddevsio/new-para-bot/dce"
+	"github.com/maddevsio/new-para-bot/ext"
 	"github.com/maddevsio/new-para-bot/utils"
 )
 
 func main() {
 	raven.CapturePanicAndWait(func() {
-		do()
+		doExt()
 	}, nil)
 }
 
-func do() {
-	// we can use db inside the container
-	// because this is working table, no need
-	// to have historical data
-	dao := dce.NewDAO("/tmp/test.db")
-	binance := dce.NewBinance(&dao)
-	hibtc := dce.NewHibtc(&dao)
-	liqui := dce.NewLiqui(&dao)
-	ethfinex := dce.NewEthfinex(&dao)
-	//kucoin := dce.NewKucoin(&dao)
-	livecoin := dce.NewLivecoin(&dao)
-	tidex := dce.NewTidex(&dao)
-	okex := dce.NewOkex(&dao)
-	huobi := dce.NewHuobi(&dao)
-	kraken := dce.NewKraken(&dao)
-	bitz := dce.NewBitz(&dao)
-	wex := dce.NewWex(&dao)
-	cex := dce.NewCex(&dao)
-	cryptopia := dce.NewCryptopia(&dao)
+func doExt() {
+
 	for {
 		log.Print("Checking...")
-		checkDCEAndAlert(binance)
-		checkDCEAndAlert(hibtc)
-		checkDCEAndAlert(liqui)
-		checkDCEAndAlert(ethfinex)
-		//checkDCEAndAlert(kucoin)
-		checkDCEAndAlert(livecoin)
-		checkDCEAndAlert(tidex)
-		checkDCEAndAlert(okex)
-		checkDCEAndAlert(huobi)
-		checkDCEAndAlert(kraken)
-		checkDCEAndAlert(bitz)
-		checkDCEAndAlert(wex)
-		checkDCEAndAlert(cex)
-		checkDCEAndAlert(cryptopia)
+		// bitconnect
+		// aex
+		// exx
+		// forkdelta
+		// gdax
+		// Kraken
+		// LocalBitcoins
+		// nlexch
+		// Switcheo
+		// TrustDex
+		// ether_delta
+		// Zaif
+		// lakebtc
+		dces := []string{
+			"ZB",
+			"Yobit", "Yunbi",
+			"Waves", "Wex",
+			"tux_exchange", "Upbit",
+			"trade_ogre", "trade_satoshi",
+			"therocktrading", "tidex",
+			"SZZC", "stocks_exchange",
+			"rightbtc", "south_xchange",
+			"qryptos", "Quoine",
+			"Paymium", "Poloniex",
+			"novaexchange", "paribu",
+			"Neraex", "nlexch",
+			"Lykke", "Mercatox",
+			"Luno", "Nanex",
+			"litebiteu", "Livecoin",
+			"Liqui", "lbank",
+			"Latoken",
+			"Jubi", "Koinex",
+			"k_kex", "kyber_network",
+			"idex", "infinity_coin",
+			"hitbtc", "Huobi",
+			"gopax", "Gemini",
+			"Gate", "Gatecoin",
+			"Extstock", "Fisco",
+			"Ethfinex", "Exmo",
+			"Cryptopia",
+			"crypto_bridge", "crypto_hub",
+			"crex24", "crxzone",
+			"coins_markets", "COSS",
+			"Coinone", "Coinrail",
+			"Coinhouse", "Coinroom",
+			"coin_exchange", "Coinbene",
+			"Coinex", "Coinfalcon",
+			"btc_alpha", "Cobinhood",
+			"ccex", "cex", "bx_thailand",
+			"Buyucoin", "btcc",
+			"Abucoins", "ACX",
+			"Bancor",
+			"Bibox", "BigONE",
+			"bit_z", "Binance",
+			"Bitfinex",
+			"Bitflyer", "Bithumb",
+			"Bitmex", "bits_blockchain",
+			"Bitso", "Bittrex",
+			"Bleutrade",
+		}
+
+		for _, dce := range dces {
+			checkDCEUsingCryptoexchangeAndAlert(dce)
+			time.Sleep(2 * time.Second)
+		}
+
 		log.Print("Sleeping...")
 		time.Sleep(60 * time.Second)
 	}
 }
 
-func checkDCEAndAlert(dce dce.DCEChecker) {
-	// get actual pairs and check
-	actualPairs, err := dce.GetListOfActualPairs()
+func checkDCEUsingCryptoexchangeAndAlert(name string) {
+	dao := dce.NewDAO("/tmp/test.db")
+	dce := ext.NewCryptoexchange(&dao, name)
+	log.Printf("%v: starting...", dce.Name)
+	actualPairs := dce.GetListOfActualPairs()
+	savedPairs, err := dce.GetListOfSavedPairs()
 	if err != nil {
 		log.Panic(err)
 	}
-
-	savedPairs, err := dce.GetDAO().GetListOfSavedPairs(dce)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	log.Printf("%v: Pairs length: %v, %v", dce.GetName(), len(actualPairs), len(savedPairs))
 
 	if actualPairs == "" {
-		log.Printf("%v: actual pairth length is 0. seems did not get the data from API, skipping...", dce.GetName())
+		log.Printf("%v: actual pairth length is 0. seems did not get the data from API, skipping...", dce.Name)
+		dce = nil
 		return
 	}
 
 	if savedPairs == "" {
-		err = dce.GetDAO().UpdatePairsAndSave(dce, actualPairs)
+		err = dce.UpdatePairsAndSave(actualPairs)
 		if err != nil {
 			log.Panic(err)
 		}
-		log.Printf("%v: No saved data. Seems the first run", dce.GetName())
+		log.Printf("%v: No saved data. Seems the first run", dce.Name)
 	} else {
-		utils.SaveNonEqualStringsToFiles(dce.GetName(), savedPairs, actualPairs)
+		utils.SaveNonEqualStringsToFiles(dce.Name, savedPairs, actualPairs)
 		diff, err := utils.DiffSets(savedPairs, actualPairs)
 		if err != nil {
 			log.Panic(err)
 		}
 		if diff != "" {
-			log.Printf("%v: We have diffs", dce.GetName())
-			err = dce.GetDAO().UpdatePairsAndSave(dce, actualPairs)
+			log.Printf("%v: We have diffs", dce.Name)
+			err = dce.UpdatePairsAndSave(actualPairs)
 			if err != nil {
 				log.Panic(err)
 			}
-			log.Printf("%v: Pairs updated", dce.GetName())
+			log.Printf("%v: Pairs updated", dce.Name)
 			config, err := bot.GetTelegramConfig("")
 			if err != nil {
 				log.Panic(err)
 			}
-			err = bot.SendMessageToTelegramChannel(config, dce.GetName()+"\n"+dce.GetWebsite()+"\n"+diff)
+
+			err = bot.SendMessageToTelegramChannel(config, dce.Name+"\n"+diff)
 			if err != nil {
 				log.Panic(err)
 			}
-			log.Printf("%v: Bot message sent", dce.GetName())
+
+			log.Printf("%v: Bot message sent", dce.Name)
 		} else {
-			log.Printf("%v No diffs", dce.GetName())
+			log.Printf("%v No diffs", dce.Name)
 		}
 	}
+
+	log.Printf("%v: Pairs length: %v, %v", dce.Name, len(actualPairs), len(savedPairs))
+	dce = nil
 }
