@@ -4,3 +4,10 @@ services:
     build: .
     restart: always
     env_file: .env
+    links:
+      - 'api'
+  api:
+    image: puzanov/cryptoexchange_api
+    restart: always
+    ports:
+      - '4567:4567'
