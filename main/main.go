@@ -97,7 +97,11 @@ func checkDCEUsingCryptoexchangeAndAlert(name string) {
 	dao := dce.NewDAO("/tmp/test.db")
 	dce := ext.NewCryptoexchange(&dao, name)
 	log.Printf("%v: starting...", dce.Name)
-	actualPairs := dce.GetListOfActualPairs()
+	actualPairs, err := dce.GetListOfActualPairs()
+	if err != nil {
+		log.Panic(err)
+	}
+
 	savedPairs, err := dce.GetListOfSavedPairs()
 	if err != nil {
 		log.Panic(err)

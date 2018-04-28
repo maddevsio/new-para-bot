@@ -13,8 +13,10 @@ func TestCryptoexchangeBinance(t *testing.T) {
 	dao := dce.NewDAO("/tmp/test.db")
 
 	c := NewCryptoexchange(&dao, "binance")
-	actualPairs := c.GetListOfActualPairs()
-	err := c.UpdatePairsAndSave(actualPairs)
+	c.URL = "http://localhost:4567/"
+	actualPairs, err := c.GetListOfActualPairs()
+	assert.NoError(t, err)
+	err = c.UpdatePairsAndSave(actualPairs)
 	assert.NoError(t, err)
 	savedPairs, err := c.GetListOfSavedPairs()
 	assert.NoError(t, err)
@@ -24,7 +26,9 @@ func TestCryptoexchangeBinance(t *testing.T) {
 	assert.Contains(t, diff, "+ BLA-KZT")
 
 	c = NewCryptoexchange(&dao, "bitfinex")
-	actualPairs = c.GetListOfActualPairs()
+	c.URL = "http://localhost:4567/"
+	actualPairs, err = c.GetListOfActualPairs()
+	assert.NoError(t, err)
 	err = c.UpdatePairsAndSave(actualPairs)
 	assert.NoError(t, err)
 	savedPairs, err = c.GetListOfSavedPairs()
