@@ -35,6 +35,7 @@ func doExt() {
 		// ether_delta
 		// Zaif
 		// lakebtc
+		// idex
 		dces := []string{
 			"ZB",
 			"Yobit", "Yunbi",
@@ -55,7 +56,7 @@ func doExt() {
 			"Latoken",
 			"Jubi", "Koinex",
 			"k_kex", "kyber_network",
-			"idex", "infinity_coin",
+			"infinity_coin",
 			"hitbtc", "Huobi",
 			"gopax", "Gemini",
 			"Gate", "Gatecoin",
