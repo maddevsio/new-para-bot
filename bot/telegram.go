@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 
@@ -47,4 +48,16 @@ func GetTelegramConfig(envFilePath string) (TelegramConfig, error) {
 		return TelegramConfig{}, err
 	}
 	return TelegramConfig{Token: token, ChatID: chatID}, nil
+}
+
+// FormatMessage takes two arguments and for a message which
+// the bot can send to a channel
+func FormatMessage(dceInfo []string, diff string) string {
+	var name = dceInfo[0]
+	var link, message string
+	if len(dceInfo) == 2 {
+		link = dceInfo[1]
+	}
+	message = fmt.Sprintf("%v %v\n%v", name, link, diff)
+	return message
 }
