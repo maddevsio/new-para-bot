@@ -96,7 +96,7 @@ func doExt() {
 			{"Coinhouse"},
 			{"Coinroom"},
 			{"coin_exchange", "https://www.coinexchange.io/"},
-			{"Coinbene"},
+			{"Coinbene", "https://www.coinbene.com/"},
 			{"Coinex", "https://www.coinex.com/"},
 			{"Coinfalcon"},
 			{"btc_alpha"},
