@@ -24,10 +24,10 @@ func TestFormateMessage(t *testing.T) {
 	message = FormatMessage(dceInfo, diff)
 	assert.Equal(t, "Test DCE http://testdce.stock\n+USDT-BTC\n+USDT-ETH\n", message)
 
-	dceInfo = []string{"Test DCE", "http://testdce.stock", "http://testdce.stock/trade/%v-%v"}
+	dceInfo = []string{"Test DCE", "http://testdce.stock", "http://testdce.stock/trade/#%v-%v"}
 	diff = "+USDT-BTC\n"
 	message = FormatMessage(dceInfo, diff)
-	assert.Equal(t, "Test DCE http://testdce.stock\n+USDT-BTC http://testdce.stock/trade/USDT-BTC\n", message)
+	assert.Equal(t, "Test DCE http://testdce.stock\n+USDT-BTC http://testdce.stock/trade/#USDT-BTC\n", message)
 
 	dceInfo = []string{"Test DCE", "http://testdce.stock", "http://testdce.stock/trade/%v-%v"}
 	diff = "+USDT-BTC\n+USDT-ETH"
