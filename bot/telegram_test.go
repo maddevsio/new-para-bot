@@ -39,3 +39,10 @@ func TestFormateMessage(t *testing.T) {
 	err = SendMessageToTelegramChannel(config, message)
 	assert.NoError(t, err)
 }
+
+func TestBugBtcAlpha(t *testing.T) {
+	dceInfo := []string{"btc_alpha", "https://btc-alpha.com/", "https://btc-alpha.com/exchange/%v_%v/"}
+	diff := "+ SPD-ETH\n"
+	message := FormatMessage(dceInfo, diff)
+	assert.Equal(t, "btc_alpha https://btc-alpha.com/\n+ SPD-ETH https://btc-alpha.com/exchange/SPD_ETH/\n", message)
+}

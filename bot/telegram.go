@@ -70,7 +70,7 @@ func FormatMessage(dceInfo []string, diff string) string {
 		diffs := strings.Split(diff, "\n")
 		for _, pair := range diffs {
 			currency := strings.Split(trimLeftChars(pair, 1), "-")
-			pairsInfo += fmt.Sprintf("%v "+tradeLink+"\n", pair, currency[0], currency[1])
+			pairsInfo += fmt.Sprintf("%v "+tradeLink+"\n", pair, strings.Trim(currency[0], " "), currency[1])
 		}
 	}
 	message = fmt.Sprintf("%v %v\n%v", name, dceLink, pairsInfo)
