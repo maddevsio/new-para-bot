@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"gopkg.in/telegram-bot-api.v4"
@@ -52,12 +53,37 @@ func GetTelegramConfig(envFilePath string) (TelegramConfig, error) {
 
 // FormatMessage takes two arguments and for a message which
 // the bot can send to a channel
+// ALARM! GOVNOCODE!
+// TODO: refactor
 func FormatMessage(dceInfo []string, diff string) string {
 	var name = dceInfo[0]
-	var link, message string
+	var dceLink, tradeLink, pairsInfo, message string
+	pairsInfo = diff
 	if len(dceInfo) == 2 {
-		link = dceInfo[1]
+		dceLink = dceInfo[1]
 	}
-	message = fmt.Sprintf("%v %v\n%v", name, link, diff)
+	if len(dceInfo) == 3 {
+		pairsInfo = ""
+		dceLink = dceInfo[1]
+		tradeLink = dceInfo[2]
+		diff = strings.Trim(diff, "\n")
+		diffs := strings.Split(diff, "\n")
+		for _, pair := range diffs {
+			currency := strings.Split(trimLeftChars(pair, 1), "-")
+			pairsInfo += fmt.Sprintf("%v "+tradeLink+"\n", pair, currency[0], currency[1])
+		}
+	}
+	message = fmt.Sprintf("%v %v\n%v", name, dceLink, pairsInfo)
 	return message
+}
+
+func trimLeftChars(s string, n int) string {
+	m := 0
+	for i := range s {
+		if m >= n {
+			return s[i:]
+		}
+		m++
+	}
+	return s[:0]
 }

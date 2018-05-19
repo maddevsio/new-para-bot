@@ -2,6 +2,7 @@ run:
 	go run main/main.go
 
 test:
+	go clean -testcache
 	go test -v ./...
 
 update:
