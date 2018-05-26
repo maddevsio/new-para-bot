@@ -12,5 +12,5 @@ func TestIdex(t *testing.T) {
 	pairs, err := idex.GetListOfActualPairs()
 	assert.NoError(t, err)
 	assert.Contains(t, pairs, "ETH_XNN")
-	assert.Contains(t, pairs, "DAI_CRYPHER")
+	assert.Contains(t, pairs, "ETH_XOXO")
 }
