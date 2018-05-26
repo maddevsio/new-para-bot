@@ -13,15 +13,22 @@ func TestSendMessageToTelegramChannel(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestFormateMessage(t *testing.T) {
+func TestFormatNoDCELink(t *testing.T) {
 	dceInfo := []string{"Test DCE"}
 	diff := "+USDT-BTC\n+USDT-ETH\n"
 	message := FormatMessage(dceInfo, diff)
 	assert.Equal(t, "Test DCE \n+USDT-BTC\n+USDT-ETH\n", message)
 
-	dceInfo = []string{"Test DCE", "http://testdce.stock"}
-	diff = "+USDT-BTC\n+USDT-ETH\n"
-	message = FormatMessage(dceInfo, diff)
+	config, err := GetTelegramConfig("../.env")
+	assert.NoError(t, err)
+	err = SendMessageToTelegramChannel(config, message)
+	assert.NoError(t, err)
+}
+
+func TestFormateMessage(t *testing.T) {
+	dceInfo := []string{"Test DCE", "http://testdce.stock"}
+	diff := "+USDT-BTC\n+USDT-ETH\n"
+	message := FormatMessage(dceInfo, diff)
 	assert.Equal(t, "Test DCE http://testdce.stock\n+USDT-BTC\n+USDT-ETH\n", message)
 
 	dceInfo = []string{"Test DCE", "http://testdce.stock", "http://testdce.stock/trade/#%v-%v"}

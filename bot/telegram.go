@@ -27,6 +27,7 @@ func SendMessageToTelegramChannel(config TelegramConfig, message string) error {
 		return err
 	}
 	msg := tgbotapi.NewMessage(config.ChatID, message)
+	msg.ParseMode = "Markdown"
 	bot.Send(msg)
 	return nil
 }
@@ -70,10 +71,10 @@ func FormatMessage(dceInfo []string, diff string) string {
 		diffs := strings.Split(diff, "\n")
 		for _, pair := range diffs {
 			currency := strings.Split(trimLeftChars(pair, 1), "-")
-			pairsInfo += fmt.Sprintf("%v "+tradeLink+"\n", pair, strings.Trim(currency[0], " "), currency[1])
+			pairsInfo += fmt.Sprintf("[%v]("+tradeLink+")\n", pair, strings.Trim(currency[0], " "), currency[1])
 		}
 	}
-	message = fmt.Sprintf("%v %v\n%v", name, dceLink, pairsInfo)
+	message = fmt.Sprintf("[%v](%v)* has pairs alerts:*\n\n%v", name, dceLink, pairsInfo)
 	return message
 }
 
